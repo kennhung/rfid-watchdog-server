@@ -1,6 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
-import java.util.Calendar;
+import org.json.JSONObject;
 
 public class DoorPermission {
     public int doorId;
@@ -17,5 +17,13 @@ public class DoorPermission {
         doorId = id;
         this.open = open;
         this.validDate = System.currentTimeMillis() + (31536000 * 10) / 1000L;
+    }
+
+    public JSONObject getJSONObject(){
+        JSONObject json = new JSONObject();
+        json.put("doorId",doorId);
+        json.put("open",open);
+        json.put("validDate",validDate);
+        return json;
     }
 }

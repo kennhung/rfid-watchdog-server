@@ -12,7 +12,7 @@ public class TestCheckDoorPermission {
 
     @Test
     public void testCheck() {
-        SQLite.openDatabase("jdbc:sqlite:foo.db");
+        SQLite.openDatabase("jdbc:sqlite:test.db");
 
         JSONObject input = new JSONObject();
         input.put("type", TypesEnum.CARD_CHECK);

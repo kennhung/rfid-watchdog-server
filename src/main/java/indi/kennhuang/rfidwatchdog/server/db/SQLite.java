@@ -24,7 +24,7 @@ public class SQLite {
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS users " +
-                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` string, `studentId` INTEGER UNIQUE, `groups` string,`uid` TEXT, `doors` TEXT )");
+                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` string, `groups` string, `uid` TEXT, `doors` TEXT, `metadata` TEXT )");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS groups " +
                     "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `doors` TEXT )");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS doors " +

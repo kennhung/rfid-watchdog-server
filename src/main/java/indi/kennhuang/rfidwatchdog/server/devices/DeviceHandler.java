@@ -9,7 +9,7 @@ import java.net.Socket;
 public class DeviceHandler implements Runnable {
     private Socket clientSocket;
     private String auth_token;
-    private boolean auth = false;
+    private boolean auth;
     private int connDoor_id;
 
     public DeviceHandler(Socket s) {
@@ -22,7 +22,7 @@ public class DeviceHandler implements Runnable {
         System.out.printf("Incoming connection from %s\n", clientSocket.getRemoteSocketAddress());
         DataInputStream input = null;
         DataOutputStream output = null;
-        StringBuffer inputBuffer = new StringBuffer();
+        StringBuilder inputBuffer = new StringBuilder();
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
@@ -65,9 +65,7 @@ public class DeviceHandler implements Runnable {
 
                 Thread.sleep(10);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             try {
