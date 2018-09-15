@@ -27,11 +27,19 @@ public class SQLite {
                     "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` string, `studentId` INTEGER UNIQUE, `groups` string,`uid` TEXT, `doors` TEXT )");
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS groups " +
                     "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `doors` TEXT )");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS doors " +
+                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `auth_token` TEXT )");
             connection.commit();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
     }
 
+    public static Statement getStatement(){
+        return statement;
+    }
 
+    public static Connection getConnection(){
+        return connection;
+    }
 }
