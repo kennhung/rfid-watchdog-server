@@ -10,7 +10,7 @@ public class DeviceHandler implements Runnable {
     private Socket clientSocket;
     private String auth_token;
     private boolean auth = false;
-    private int conn_id;
+    private int connDoor_id;
 
     public DeviceHandler(Socket s) {
         clientSocket = s;
@@ -38,24 +38,25 @@ public class DeviceHandler implements Runnable {
 
                         HardwareMessage message = new HardwareMessage(inputBuffer.toString());
                         JSONObject reply = new JSONObject();
+                        if(auth || message.type == HardwareMessage.AUTH){
+                            switch (message.type) {
+                                case HardwareMessage.CARD_CHECK:
+                                    reply = CheckDoorPermission.check(message.content);
+                                    break;
+                                case HardwareMessage.RESPONSE:
 
-                        switch (message.type) {
-                            case HardwareMessage.CARD_CHECK:
-                                reply = CheckDoorPermission.check(message.content);
-                                break;
-                            case HardwareMessage.RESPONSE:
+                                    break;
+                                case HardwareMessage.AUTH:
 
-                                break;
-                            case HardwareMessage.AUTH:
+                                    break;
+                                default:
 
-                                break;
-                            default:
-
-                                break;
+                                    break;
+                            }
                         }
 
-
                         output.writeUTF(reply.toString());
+                        output.flush();
                     } else {
                         inputBuffer.append((char) buf);
                     }

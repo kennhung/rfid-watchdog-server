@@ -6,6 +6,8 @@ import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class TestCheckDoorPermission {
 
     @Test
@@ -19,5 +21,6 @@ public class TestCheckDoorPermission {
         JSONObject out = CheckDoorPermission.check(input);
 
         System.out.println(out.toString());
+        assertEquals(out.get("open"),true);
     }
 }
