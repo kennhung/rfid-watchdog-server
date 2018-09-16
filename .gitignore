@@ -87,3 +87,4 @@ fabric.properties
 .idea/httpRequests
 
 *.db
+.idea/dataSources.xml
