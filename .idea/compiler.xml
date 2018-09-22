@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="rfid-watchdog-server" target="7" />
+      <module name="rfid-watchdog-server" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
