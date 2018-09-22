@@ -104,6 +104,7 @@ public class DeviceHandler implements Runnable {
                     output.close();
                 if (this.clientSocket != null && !this.clientSocket.isClosed())
                     this.clientSocket.close();
+                pingTimer.cancel();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -120,6 +121,7 @@ public class DeviceHandler implements Runnable {
                 output.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+                return;
             }
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
         }
