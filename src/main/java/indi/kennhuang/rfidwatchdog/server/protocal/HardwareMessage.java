@@ -21,6 +21,7 @@ public class HardwareMessage extends TypesEnum {
         HardwareMessage out = new HardwareMessage();
         out.content = new JSONObject(in);
         out.type = encode(out.content.getInt("type"));
+        out.content.remove("type");
         return out;
     }
 

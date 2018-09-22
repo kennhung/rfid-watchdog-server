@@ -5,7 +5,8 @@ public class TypesEnum {
         RESPONSE,
         PING,
         CARD_CHECK,
-        AUTH
+        AUTH,
+        PONG
     }
 
     public static int decode(types type) {
@@ -18,6 +19,8 @@ public class TypesEnum {
                 return 3;
             case AUTH:
                 return 4;
+            case PONG:
+                return 5;
         }
         return 0;
     }
@@ -32,6 +35,8 @@ public class TypesEnum {
                 return types.CARD_CHECK;
             case 4:
                 return types.AUTH;
+            case 5:
+                return types.PONG;
             default:
                 return null;
         }

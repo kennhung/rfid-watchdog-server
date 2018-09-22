@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class DeviceHandler implements Runnable {
-    public final static int pingPeriod = 5;
+    public final static int pingPeriod = 30;
 
     private Socket clientSocket;
     private Timer pingTimer;
@@ -48,7 +48,8 @@ public class DeviceHandler implements Runnable {
             lastPing = Instant.now();
             while (true) {
                 boolean doReply = true;
-                if(Duration.between(lastPing, Instant.now()).abs().getSeconds()>5){
+                long pingTime = Duration.between(lastPing, Instant.now()).abs().getSeconds();
+                if(pingTime>35){
                     break;
                 }
 
@@ -65,9 +66,8 @@ public class DeviceHandler implements Runnable {
                                 case CARD_CHECK:
                                     reply.type = TypesEnum.types.RESPONSE;
                                     JSONObject checkResult = DoorUtil.check(message.content);
-                                    reply.content = new JSONObject();
-                                    reply.content.put("reply", checkResult);
-                                    System.out.println(reply.toString());
+                                    reply.content = new JSONObject().put("reply", checkResult.toString());
+                                    System.out.println(HardwareMessage.decodeMessage(reply));
                                     break;
                                 case PONG:
                                     lastPing = Instant.now();
@@ -83,7 +83,7 @@ public class DeviceHandler implements Runnable {
                         }
 
                         if(doReply) {
-                            output.write((reply.toString() + ";").getBytes());
+                            output.write((HardwareMessage.decodeMessage(reply) + ";").getBytes());
                             output.flush();
                         }
                         inputBuffer.delete(0, inputBuffer.length());
@@ -121,6 +121,7 @@ public class DeviceHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            pingTimer.schedule(new PingTask(), pingPeriod * 1000);
         }
     }
 }
