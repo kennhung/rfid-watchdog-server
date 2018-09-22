@@ -59,11 +59,14 @@ public class DeviceHandler implements Runnable {
                     } else if (buf == ';') {
                         System.out.println("["+Thread.currentThread().getName()+": receive] "+inputBuffer.toString());
                         HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
-                        JSONObject reply = new JSONObject();
+                        HardwareMessage reply = new HardwareMessage();
                         if (auth || message.type == HardwareMessage.types.AUTH) {
                             switch (message.type) {
                                 case CARD_CHECK:
-                                    reply = DoorUtil.check(message.content);
+                                    reply.type = TypesEnum.types.RESPONSE;
+                                    JSONObject checkResult = DoorUtil.check(message.content);
+                                    reply.content = new JSONObject();
+                                    reply.content.put("reply", checkResult);
                                     System.out.println(reply.toString());
                                     break;
                                 case PONG:
