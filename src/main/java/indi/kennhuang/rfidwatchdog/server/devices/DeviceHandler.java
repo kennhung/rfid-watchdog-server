@@ -2,10 +2,14 @@ package indi.kennhuang.rfidwatchdog.server.devices;
 
 import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
+import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,6 +20,7 @@ public class DeviceHandler implements Runnable {
     private Timer pingTimer;
     private DataInputStream input = null;
     private DataOutputStream output = null;
+    private Instant lastPing = null;
 
     private String auth_token;
     private boolean auth;
@@ -31,6 +36,7 @@ public class DeviceHandler implements Runnable {
     public void run() {
         System.out.printf("Incoming connection from %s\n", clientSocket.getRemoteSocketAddress());
         StringBuilder inputBuffer = new StringBuilder();
+        Thread.currentThread().setName(clientSocket.getRemoteSocketAddress().toString());
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
@@ -39,13 +45,19 @@ public class DeviceHandler implements Runnable {
             pingTimer = new Timer();
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
 
+            lastPing = Instant.now();
             while (true) {
+                boolean doReply = true;
+                if(Duration.between(lastPing, Instant.now()).abs().getSeconds()>5){
+                    break;
+                }
+
                 if (input.available() > 0) {
                     int buf = input.read();
                     if (buf == -1) {
                         break;
                     } else if (buf == ';') {
-                        System.out.println(inputBuffer.toString());
+                        System.out.println("["+Thread.currentThread().getName()+": receive] "+inputBuffer.toString());
                         HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
                         JSONObject reply = new JSONObject();
                         if (auth || message.type == HardwareMessage.types.AUTH) {
@@ -54,8 +66,9 @@ public class DeviceHandler implements Runnable {
                                     reply = DoorUtil.check(message.content);
                                     System.out.println(reply.toString());
                                     break;
-                                case RESPONSE:
-
+                                case PONG:
+                                    lastPing = Instant.now();
+                                    doReply = false;
                                     break;
                                 case AUTH:
 
@@ -66,8 +79,10 @@ public class DeviceHandler implements Runnable {
                             }
                         }
 
-                        output.write((reply.toString() + ";").getBytes());
-                        output.flush();
+                        if(doReply) {
+                            output.write((reply.toString() + ";").getBytes());
+                            output.flush();
+                        }
                         inputBuffer.delete(0, inputBuffer.length());
                     } else {
                         inputBuffer.append((char) buf);
@@ -91,12 +106,18 @@ public class DeviceHandler implements Runnable {
             }
             System.out.println(clientSocket.getRemoteSocketAddress() + " disconnected");
         }
-
     }
 
     class PingTask extends TimerTask {
         public void run() {
-
+            HardwareMessage pingMessage = new HardwareMessage();
+            pingMessage.type = TypesEnum.types.PING;
+            try {
+                output.write((HardwareMessage.decodeMessage(pingMessage) + ";").getBytes());
+                output.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

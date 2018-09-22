@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DeviceServer  implements Runnable {
+    public final static int serverPort = 6083;
 
     private static ServerSocket server = null;
     private static boolean shutdown = false;
@@ -15,8 +16,8 @@ public class DeviceServer  implements Runnable {
     public void run() {
         ExecutorService threadExecutor = Executors.newCachedThreadPool();
         try {
-            System.out.println("device Server Starting on Port 6083");
-            server = new ServerSocket(6083);
+            System.out.println("device Server Starting on Port "+serverPort);
+            server = new ServerSocket(serverPort);
             while (!shutdown) {
                 Socket socket = server.accept();
                 threadExecutor.execute(new DeviceHandler(socket));
