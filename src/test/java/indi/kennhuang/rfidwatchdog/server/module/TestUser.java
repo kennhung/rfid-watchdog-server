@@ -10,13 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestUser {
     @Test
     public void testCheck() {
-        SQLite.openDatabase("jdbc:sqlite:test.db");
+//        SQLite.openDatabase("jdbc:sqlite:test.db");
 
         User user = new User();
         user.metadata = "{}";
         user.doors.add(new DoorPermission(2, true));
         user.name = "TestUser";
-        user.uid = "107AC648";
+        user.uid = "TESTUID";
         user.metadata = "{\"test\":true}";
         //Create user
 

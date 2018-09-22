@@ -1,16 +1,26 @@
 package indi.kennhuang.rfidwatchdog.server.devices;
 
+import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DeviceHandler implements Runnable {
+    public final static int pingPeriod = 5;
+
     private Socket clientSocket;
+    private Timer pingTimer;
+    private DataInputStream input = null;
+    private DataOutputStream output = null;
+
     private String auth_token;
     private boolean auth;
     private int connDoor_id;
+
 
     public DeviceHandler(Socket s) {
         clientSocket = s;
@@ -20,35 +30,34 @@ public class DeviceHandler implements Runnable {
     @Override
     public void run() {
         System.out.printf("Incoming connection from %s\n", clientSocket.getRemoteSocketAddress());
-        DataInputStream input = null;
-        DataOutputStream output = null;
         StringBuilder inputBuffer = new StringBuilder();
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
-            auth = true;
-            //TODO remove after auth finish;
+            auth = true;//TODO remove after auth finish;
+
+            pingTimer = new Timer();
+            pingTimer.schedule(new PingTask(), pingPeriod * 1000);
+
             while (true) {
-                //TODO add ping function
                 if (input.available() > 0) {
                     int buf = input.read();
                     if (buf == -1) {
                         break;
                     } else if (buf == ';') {
                         System.out.println(inputBuffer.toString());
-
-                        HardwareMessage message = new HardwareMessage(inputBuffer.toString());
+                        HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
                         JSONObject reply = new JSONObject();
-                        if (auth || message.type == HardwareMessage.AUTH) {
+                        if (auth || message.type == HardwareMessage.types.AUTH) {
                             switch (message.type) {
-                                case HardwareMessage.CARD_CHECK:
-                                    reply = CheckDoorPermission.check(message.content);
+                                case CARD_CHECK:
+                                    reply = DoorUtil.check(message.content);
                                     System.out.println(reply.toString());
                                     break;
-                                case HardwareMessage.RESPONSE:
+                                case RESPONSE:
 
                                     break;
-                                case HardwareMessage.AUTH:
+                                case AUTH:
 
                                     break;
                                 default:
@@ -64,7 +73,6 @@ public class DeviceHandler implements Runnable {
                         inputBuffer.append((char) buf);
                     }
                 }
-
 
                 Thread.sleep(10);
             }
@@ -86,4 +94,9 @@ public class DeviceHandler implements Runnable {
 
     }
 
+    class PingTask extends TimerTask {
+        public void run() {
+
+        }
+    }
 }
