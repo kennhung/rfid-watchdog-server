@@ -37,9 +37,6 @@ jobs:
       - checkout
       - run: mvn test
   deploy:
-    branches:
-        only:
-          - master
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     steps:
@@ -51,7 +48,14 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test
-  deploy:
-    jobs:
-      - deploy
+      - test:
+        requires:
+          - build
+      - deploy:
+        requires:
+          - test
+        filters:
+          branches:
+            only:
+              - master
+
