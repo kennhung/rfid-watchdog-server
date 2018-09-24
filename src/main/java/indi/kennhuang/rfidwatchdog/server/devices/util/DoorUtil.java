@@ -1,4 +1,4 @@
-package indi.kennhuang.rfidwatchdog.server.devices;
+package indi.kennhuang.rfidwatchdog.server.devices.util;
 
 import indi.kennhuang.rfidwatchdog.server.module.DoorPermission;
 import indi.kennhuang.rfidwatchdog.server.module.Group;
@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CheckDoorPermission {
+public class DoorUtil {
 
     public static JSONObject check(JSONObject in) {
         JSONObject reply = new JSONObject();

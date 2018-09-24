@@ -1,13 +1,14 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUser {
+
     @Test
     public void testCheck() {
         SQLite.openDatabase("jdbc:sqlite:test.db");
@@ -16,7 +17,7 @@ public class TestUser {
         user.metadata = "{}";
         user.doors.add(new DoorPermission(2, true));
         user.name = "TestUser";
-        user.uid = "107AC648";
+        user.uid = "TESTUID";
         user.metadata = "{\"test\":true}";
         //Create user
 
@@ -40,5 +41,6 @@ public class TestUser {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        SQLite.closeDatabase();
     }
 }
