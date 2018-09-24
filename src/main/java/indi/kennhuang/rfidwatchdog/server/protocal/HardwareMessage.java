@@ -1,7 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.protocal;
 
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HardwareMessage extends TypesEnum {

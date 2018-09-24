@@ -21,8 +21,9 @@ public class TypesEnum {
                 return 4;
             case PONG:
                 return 5;
+            default:
+                return 0;
         }
-        return 0;
     }
 
     public static types encode(int type) {

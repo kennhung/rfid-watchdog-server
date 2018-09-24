@@ -4,7 +4,6 @@ import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
 import indi.kennhuang.rfidwatchdog.server.util.Log;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -19,7 +18,6 @@ public class DeviceHandler implements Runnable {
 
     private Socket clientSocket;
     private Timer pingTimer;
-    private DataInputStream input = null;
     private DataOutputStream output = null;
     private Instant lastPing = null;
 
@@ -38,6 +36,7 @@ public class DeviceHandler implements Runnable {
         Thread.currentThread().setName(clientSocket.getRemoteSocketAddress().toString());
         Log.log("Incoming connection from " + clientSocket.getRemoteSocketAddress());
         StringBuilder inputBuffer = new StringBuilder();
+        DataInputStream input = null;
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
