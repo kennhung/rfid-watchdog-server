@@ -1,0 +1,45 @@
+version: 2 # use CircleCI 2.0
+jobs:
+  build:
+
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+    environment:
+          MAVEN_OPTS: -Xmx3200m
+    steps:
+      - checkout
+
+      - run:
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          key: project-{{ checksum "pom.xml" }}
+
+      - run:
+          name: Maven clean
+          command: mvn clean
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+
+      - run:
+          name: Maven validate
+          command: mvn validate
+      - run:
+          name: Maven compile
+          command: mvn compile
+      - run:
+          name: Maven test
+          command: mvn test
+      - run:
+          name: Maven package
+          command: mvn package
+
+      - run: mvn package # run the actual tests
