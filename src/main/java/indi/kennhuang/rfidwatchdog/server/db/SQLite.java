@@ -1,5 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.db;
 
+import indi.kennhuang.rfidwatchdog.server.util.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,7 +21,7 @@ public class SQLite {
             // create a database connection
             connection = DriverManager.getConnection(url);
             connection.setAutoCommit(false);
-            System.out.println("Opened database successfully");
+            Log.log("Opened database successfully");
             statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
@@ -32,6 +34,14 @@ public class SQLite {
             connection.commit();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    public static void closeDatabase(){
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

@@ -29,17 +29,9 @@ jobs:
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
 
-      - run:
-          name: Maven validate
-          command: mvn validate
-      - run:
-          name: Maven compile
-          command: mvn compile
-      - run:
-          name: Maven test
-          command: mvn test
-      - run:
-          name: Maven package
-          command: mvn package
-
-      - run: mvn package # run the actual tests
+      - run: mvn validate
+      - run: mvn compile
+      - run: mvn test
+      - run: mvn package
+  deploy:
+      -

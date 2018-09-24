@@ -6,7 +6,7 @@ import indi.kennhuang.rfidwatchdog.server.module.DoorPermission;
 import indi.kennhuang.rfidwatchdog.server.module.User;
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.sql.SQLException;
 
@@ -38,5 +38,6 @@ public class TestDoorUtil {
 
         System.out.println(out.toString());
         assertEquals(true,out.getBoolean("open"));
+        SQLite.closeDatabase();
     }
 }

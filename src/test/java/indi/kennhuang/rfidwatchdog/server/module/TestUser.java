@@ -1,16 +1,17 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUser {
+
     @Test
     public void testCheck() {
-//        SQLite.openDatabase("jdbc:sqlite:test.db");
+        SQLite.openDatabase("jdbc:sqlite:test.db");
 
         User user = new User();
         user.metadata = "{}";
@@ -40,5 +41,6 @@ public class TestUser {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        SQLite.closeDatabase();
     }
 }

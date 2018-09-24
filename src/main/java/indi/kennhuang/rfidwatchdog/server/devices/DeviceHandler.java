@@ -3,6 +3,7 @@ package indi.kennhuang.rfidwatchdog.server.devices;
 import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
+import indi.kennhuang.rfidwatchdog.server.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ public class DeviceHandler implements Runnable {
     private String auth_token;
     private boolean auth;
     private int connDoor_id;
-
+    private boolean looping = true;
 
     public DeviceHandler(Socket s) {
         clientSocket = s;
@@ -34,9 +35,9 @@ public class DeviceHandler implements Runnable {
 
     @Override
     public void run() {
-        System.out.printf("Incoming connection from %s\n", clientSocket.getRemoteSocketAddress());
-        StringBuilder inputBuffer = new StringBuilder();
         Thread.currentThread().setName(clientSocket.getRemoteSocketAddress().toString());
+        Log.log("Incoming connection from " + clientSocket.getRemoteSocketAddress());
+        StringBuilder inputBuffer = new StringBuilder();
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
@@ -46,10 +47,11 @@ public class DeviceHandler implements Runnable {
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
 
             lastPing = Instant.now();
-            while (true) {
+            while (looping) {
                 boolean doReply = true;
                 long pingTime = Duration.between(lastPing, Instant.now()).abs().getSeconds();
-                if(pingTime>35){
+                if (pingTime > 35) {
+                    pingTimer.cancel();
                     break;
                 }
 
@@ -58,7 +60,7 @@ public class DeviceHandler implements Runnable {
                     if (buf == -1) {
                         break;
                     } else if (buf == ';') {
-                        System.out.println("["+Thread.currentThread().getName()+": receive] "+inputBuffer.toString());
+                        Log.log(inputBuffer.toString());
                         HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
                         HardwareMessage reply = new HardwareMessage();
                         if (auth || message.type == HardwareMessage.types.AUTH) {
@@ -82,7 +84,7 @@ public class DeviceHandler implements Runnable {
                             }
                         }
 
-                        if(doReply) {
+                        if (doReply) {
                             output.write((HardwareMessage.decodeMessage(reply) + ";").getBytes());
                             output.flush();
                         }
@@ -120,7 +122,12 @@ public class DeviceHandler implements Runnable {
                 output.write((HardwareMessage.decodeMessage(pingMessage) + ";").getBytes());
                 output.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                if (e.getMessage().equals("Connection reset by peer: socket write error") && !e.getMessage().equals("Socket closed")) {
+                    Log.log("Ping send fail");
+                } else {
+                    e.printStackTrace();
+                }
+                looping = false;
                 return;
             }
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
