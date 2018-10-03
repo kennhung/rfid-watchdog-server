@@ -87,7 +87,7 @@ public class WatchDogLogger {
 
     public void debug(String msg){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
-        System.out.println("["+sdf.format(Calendar.getInstance().getTime())+"] [DEBUG] ["+Thread.currentThread().getName()+"] "+msg);
+        System.out.println("["+sdf.format(Calendar.getInstance().getTime())+"] ["+logType.name()+"-DEBUG] ["+Thread.currentThread().getName()+"] "+msg);
     }
 
 }
