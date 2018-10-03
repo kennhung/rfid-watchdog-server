@@ -14,14 +14,13 @@ public class DeviceServer  implements Runnable {
 
     private static ServerSocket server = null;
     private static boolean shutdown = false;
-    private WatchDogLogger logger;
 
     @Override
     public void run() {
         Thread.currentThread().setName("DeviceServer");
         ExecutorService threadExecutor = Executors.newCachedThreadPool();
 
-        logger = new WatchDogLogger(LogType.HardwareServer);
+        WatchDogLogger logger = new WatchDogLogger(LogType.HardwareServer);
 
         try {
             logger.info("device Server Starting on Port "+serverPort);

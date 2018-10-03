@@ -13,5 +13,6 @@ public class WatchdogServer {
         WatchDogLogger.init();
         new Thread(deviceserver).start();
         SQLite.openDatabase("jdbc:sqlite:foo.db");
+        logger.info("Server initialized");
     }
 }
