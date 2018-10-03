@@ -30,7 +30,7 @@ public class TestHardwareServer {
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
             timer = new Timer();
-            timer.schedule(new task(), 7 * 1000);
+            timer.schedule(new task(), 60 * 1000);
 
             StringBuilder inputBuffer = new StringBuilder();
             while (true) {
