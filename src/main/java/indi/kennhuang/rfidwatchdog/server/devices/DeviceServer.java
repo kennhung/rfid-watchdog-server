@@ -1,6 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.devices;
 
-import indi.kennhuang.rfidwatchdog.server.util.Log;
+import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,13 +14,17 @@ public class DeviceServer  implements Runnable {
 
     private static ServerSocket server = null;
     private static boolean shutdown = false;
+    private WatchDogLogger logger;
 
     @Override
     public void run() {
         Thread.currentThread().setName("DeviceServer");
         ExecutorService threadExecutor = Executors.newCachedThreadPool();
+
+        logger = new WatchDogLogger(LogType.HardwareServer);
+
         try {
-            Log.log("device Server Starting on Port "+serverPort);
+            logger.info("device Server Starting on Port "+serverPort);
             server = new ServerSocket(serverPort);
             while (!shutdown) {
                 Socket socket = server.accept();
