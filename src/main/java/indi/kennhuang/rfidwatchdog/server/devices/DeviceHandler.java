@@ -3,7 +3,8 @@ package indi.kennhuang.rfidwatchdog.server.devices;
 import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
-import indi.kennhuang.rfidwatchdog.server.util.Log;
+import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -26,6 +27,8 @@ public class DeviceHandler implements Runnable {
     private int connDoor_id;
     private boolean looping = true;
 
+    private WatchDogLogger logger;
+
     public DeviceHandler(Socket s) {
         clientSocket = s;
         auth = false;
@@ -34,7 +37,8 @@ public class DeviceHandler implements Runnable {
     @Override
     public void run() {
         Thread.currentThread().setName(clientSocket.getRemoteSocketAddress().toString());
-        Log.log("Incoming connection from " + clientSocket.getRemoteSocketAddress());
+        logger = new WatchDogLogger(LogType.HardwareServer);
+        logger.info("Incoming connection from " + clientSocket.getRemoteSocketAddress());
         StringBuilder inputBuffer = new StringBuilder();
         DataInputStream input = null;
         try {
@@ -59,7 +63,7 @@ public class DeviceHandler implements Runnable {
                     if (buf == -1) {
                         break;
                     } else if (buf == ';') {
-                        Log.log(inputBuffer.toString());
+                        logger.debug(inputBuffer.toString());
                         HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
                         HardwareMessage reply = new HardwareMessage();
                         if (auth || message.type == HardwareMessage.types.AUTH) {
@@ -122,7 +126,7 @@ public class DeviceHandler implements Runnable {
                 output.flush();
             } catch (IOException e) {
                 if (e.getMessage().equals("Connection reset by peer: socket write error") && !e.getMessage().equals("Socket closed")) {
-                    Log.log("Ping send fail");
+                    logger.fine("Ping send fail");
                 } else {
                     e.printStackTrace();
                 }

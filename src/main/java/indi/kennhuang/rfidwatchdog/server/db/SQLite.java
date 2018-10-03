@@ -1,6 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.db;
 
-import indi.kennhuang.rfidwatchdog.server.util.Log;
+import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +11,7 @@ import java.sql.Statement;
 public class SQLite {
     protected static Connection connection = null;
     protected static Statement statement = null;
+    private static WatchDogLogger logger = new WatchDogLogger(LogType.DB);
 
     public static void openDatabase(String url) {
         try {
@@ -21,7 +23,7 @@ public class SQLite {
             // create a database connection
             connection = DriverManager.getConnection(url);
             connection.setAutoCommit(false);
-            Log.log("Opened database successfully");
+            logger.info("Opened database successfully");
             statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
