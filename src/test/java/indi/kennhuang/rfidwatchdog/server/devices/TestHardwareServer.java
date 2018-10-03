@@ -3,6 +3,7 @@ package indi.kennhuang.rfidwatchdog.server.devices;
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
 import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
 import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.junit.Test;
 
 import java.io.DataInputStream;
@@ -22,6 +23,7 @@ public class TestHardwareServer {
 
     @Test
     public void testPing() throws InterruptedException {
+        WatchDogLogger.init();
         new Thread(new DeviceServer()).start();
         SQLite.openDatabase("jdbc:sqlite:test.db");
 

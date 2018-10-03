@@ -1,6 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ public class TestUser {
 
     @Test
     public void testCheck() {
+        WatchDogLogger.init();
         SQLite.openDatabase("jdbc:sqlite:test.db");
 
         User user = new User();
