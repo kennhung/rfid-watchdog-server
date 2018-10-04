@@ -44,7 +44,7 @@ public class WatchDogLogger {
 
     public WatchDogLogger(LogType type) {
         logger = loggers.get(type).logger;
-        logger.setLevel(Level.ALL);
+
     }
     public WatchDogLogger(LogType type, Level consoleLevel, Level fhLevel){
         logType = type;
