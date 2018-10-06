@@ -7,7 +7,6 @@ import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import indi.kennhuang.rfidwatchdog.server.web.WebApp;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class WatchdogServer {
     private static DeviceServer deviceserver = new DeviceServer();
@@ -25,5 +24,19 @@ public class WatchdogServer {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }
         logger.info("Server initialized");
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                WatchDogLogger.close();
+                System.out.println("Logger close");
+            }
+        }));
+        // close logger file handler before close
+
+        while (true){
+
+        }
     }
+
 }
