@@ -4,6 +4,7 @@ import fi.iki.elonen.NanoHTTPD;
 import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,7 @@ public class WebApp extends NanoHTTPD {
 
         Iterator e;
         if (!this.quiet) {
-            System.out.println(session.getMethod() + " '" + uri + "' ");
+            logger.debug(session.getMethod() + " '" + uri + "' ");
             if (this.detail) {
                 e = header.keySet().iterator();
 
@@ -56,37 +57,43 @@ public class WebApp extends NanoHTTPD {
         if (uri.equals("/")) {
             uri = "/index.html";
         }
-
         //route special uri
 
         InputStream in = WatchdogServer.class.getResourceAsStream("/web" + uri);
-        String response = "";
+        Response r = null;
 
+        byte[] fileReadIn;
         if (in == null) {
-            in = WatchdogServer.class.getResourceAsStream("/web/404.html");
-            if (in == null) {
-                response = "HTTP 404 Error, Not found.";
-            } else {
-                try {
-                    while (in.available() > 0) {
-                        response += (char) in.read();
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+            r = getNotFoundResponse();
         } else {
             try {
-                while (in.available() > 0) {
-                    response += (char) in.read();
+                fileReadIn = IOUtils.toByteArray(in);
+                if(uri.contains("/css/")||uri.contains("/js/")){
+                    r = newFixedLengthResponse(Response.Status.OK,MIME_PLAINTEXT,new String(fileReadIn));
+                }
+                else {
+                    r = newFixedLengthResponse(Response.Status.OK,MIME_HTML,new String(fileReadIn));
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
+        return r;
+    }
 
-
-        return newFixedLengthResponse(response);
+    private Response getNotFoundResponse(){
+        Response r = null;
+        InputStream in = WatchdogServer.class.getResourceAsStream("/web/404.html");
+        if (in == null) {
+            r = newFixedLengthResponse(Response.Status.NOT_FOUND,MIME_PLAINTEXT,"Error 404, file not found.");
+        } else {
+            try {
+                r = newFixedLengthResponse(Response.Status.NOT_FOUND,MIME_HTML,new String(IOUtils.toByteArray(in)));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return r;
     }
 
 }
