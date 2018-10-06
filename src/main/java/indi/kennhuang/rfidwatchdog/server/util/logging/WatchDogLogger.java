@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 public class WatchDogLogger {
     private static Map<LogType, LoggerSet> loggers = new HashMap<LogType, LoggerSet>();
     private static boolean init = false;
+    private static LoggerSet allLogger;
 
     private Logger logger;
     private LogType logType;
@@ -33,28 +34,41 @@ public class WatchDogLogger {
                     Files.createFile(path);
 
                     loggers.put(type, new LoggerSet(type.name(),filePath));
-                    loggers.get(type).logger.info("Logger Start");
+                    loggers.get(type).logger.finest("Logger Start");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
+            allLogger = loggers.get(LogType.ALL);
+            allLogger.consoleHandler.setLevel(Level.OFF);
+            allLogger.fh.setLevel(Level.ALL);
             init = true;
+        }
+    }
+
+    public static void close(){
+        if (init) {
+            for (LogType type : LogType.values()) {
+                loggers.get(type).fh.close();
+            }
+            init = false;
         }
     }
 
     public WatchDogLogger(LogType type) {
         logger = loggers.get(type).logger;
-
     }
     public WatchDogLogger(LogType type, Level consoleLevel, Level fhLevel){
         logType = type;
         logger = loggers.get(type).logger;
-        logger.setLevel(consoleLevel);
+        loggers.get(logType).consoleHandler.setLevel(consoleLevel);
         loggers.get(logType).fh.setLevel(fhLevel);
     }
 
     public void log(Level level, String msg){
         logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
+        allLogger.logger.log(level,"log");
     }
 
     public void severe(String msg){
