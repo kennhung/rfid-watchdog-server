@@ -83,7 +83,7 @@ public class WebApp extends NanoHTTPD {
 
     private Response getNotFoundResponse(){
         Response r = null;
-        InputStream in = WatchdogServer.class.getResourceAsStream("/web/404.html");
+        InputStream in = WatchdogServer.class.getResourceAsStream("/web/errHtml/404.html");
         if (in == null) {
             r = newFixedLengthResponse(Response.Status.NOT_FOUND,MIME_PLAINTEXT,"Error 404, file not found.");
         } else {
@@ -95,5 +95,19 @@ public class WebApp extends NanoHTTPD {
         }
         return r;
     }
-
+    
+    private Response getUnauthorizedResponse(){
+        Response r = null;
+        InputStream in = WatchdogServer.class.getResourceAsStream("/web/errHtml/401.html");
+        if (in == null) {
+            r = newFixedLengthResponse(Response.Status.UNAUTHORIZED,MIME_PLAINTEXT,"Error 401, Unauthorized.");
+        } else {
+            try {
+                r = newFixedLengthResponse(Response.Status.UNAUTHORIZED,MIME_HTML,new String(IOUtils.toByteArray(in)));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+        return r;
+    }
 }
