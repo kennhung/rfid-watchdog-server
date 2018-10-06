@@ -68,8 +68,8 @@ public class WebApp extends NanoHTTPD {
         } else {
             try {
                 fileReadIn = IOUtils.toByteArray(in);
-                if(uri.contains("/css/")||uri.contains("/js/")){
-                    r = newFixedLengthResponse(Response.Status.OK,MIME_PLAINTEXT,new String(fileReadIn));
+                if(uri.contains("/css/")){
+                    r = newFixedLengthResponse(Response.Status.OK,getMimeTypeForFile(uri),new String(fileReadIn));
                 }
                 else {
                     r = newFixedLengthResponse(Response.Status.OK,MIME_HTML,new String(fileReadIn));
