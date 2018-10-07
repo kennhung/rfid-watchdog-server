@@ -34,7 +34,13 @@ public class Template {
         return newFixedLengthResponse(Response.Status.METHOD_NOT_ALLOWED,MIME_PLAINTEXT,"Error 405, Method Not Allowed.");
     }
 
-
+    public static Response getForbiddenResponse(){
+        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.UNAUTHORIZED,"/web/errHtml/403.html");
+        if (r == null) {
+            r = newFixedLengthResponse(NanoHTTPD.Response.Status.UNAUTHORIZED, MIME_PLAINTEXT, "Error 403, Forbidden.");
+        }
+        return r;
+    }
 
     private static Response getTemplateFromFile(Response.Status status, String path){
         Response r = null;

@@ -59,7 +59,12 @@ public class WebApp extends NanoHTTPD {
         }
 
         if (uri.equals("/")) {
+            // index
             uri = "/index.html";
+        }
+        else if(uri.contains("/errHtml/")){
+            // 403
+            return Template.getForbiddenResponse();
         }
         // route special uri
 
@@ -77,6 +82,7 @@ public class WebApp extends NanoHTTPD {
         } else {
             authToken = auth.split(" ")[1];
         }
+        // handle authToken
 
         byte[] fileReadIn;
         if (in == null) {
