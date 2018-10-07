@@ -35,9 +35,9 @@ public class Template {
     }
 
     public static Response getForbiddenResponse(){
-        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.UNAUTHORIZED,"/web/errHtml/403.html");
+        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.FORBIDDEN,"/web/errHtml/403.html");
         if (r == null) {
-            r = newFixedLengthResponse(NanoHTTPD.Response.Status.UNAUTHORIZED, MIME_PLAINTEXT, "Error 403, Forbidden.");
+            r = newFixedLengthResponse(NanoHTTPD.Response.Status.FORBIDDEN, MIME_PLAINTEXT, "Error 403, Forbidden.");
         }
         return r;
     }
