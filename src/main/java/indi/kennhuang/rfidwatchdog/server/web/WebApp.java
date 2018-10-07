@@ -82,7 +82,7 @@ public class WebApp extends NanoHTTPD {
         if (in == null) {
             // File not found
             r = Template.getNotFoundResponse();
-        } else if (uri.contains("/res/")) {
+        } else if (uri.contains("/assets/")) {
             // Serve resource files
             try {
                 fileReadIn = IOUtils.toByteArray(in);
