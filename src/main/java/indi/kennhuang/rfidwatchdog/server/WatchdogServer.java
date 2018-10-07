@@ -18,8 +18,15 @@ public class WatchdogServer {
         new Thread(deviceserver).start();
         SQLite.openDatabase("jdbc:sqlite:foo.db");
 
+        boolean webDebug = false;
+        for(String arg :Args){
+            if(arg.equals("-debug")){
+                webDebug = true;
+            }
+        }
+
         try {
-            new WebApp(6084);
+            new WebApp(6084,webDebug);
         } catch (IOException ioe) {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }

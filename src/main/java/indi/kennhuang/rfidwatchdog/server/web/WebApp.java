@@ -8,20 +8,24 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WebApp extends NanoHTTPD {
     private boolean quiet;
     private boolean detail;
     private WatchDogLogger logger;
+    private Map<String, Integer> authFailCount = new HashMap<String, Integer>();
 
-    public WebApp(int port) throws IOException {
+    private static final int authFailTime = 2;
+
+    public WebApp(int port, boolean debug) throws IOException {
         super(port);
         logger = new WatchDogLogger(LogType.WebPage);
         quiet = false;
         detail = false;
+        if(!debug){
+            quiet = true;
+        }
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         logger.info("Running! Point your browsers to http://localhost:" + port + "/");
     }
@@ -31,10 +35,11 @@ public class WebApp extends NanoHTTPD {
         Map<String, String> header = session.getHeaders();
         Map<String, List<String>> parms = session.getParameters();
         String uri = session.getUri();
+        String auth = header.get("authorization");
 
         Iterator e;
         if (!this.quiet) {
-            logger.debug(session.getMethod() + " '" + uri + "' ");
+            logger.debug(session.getMethod() + " '" + uri + "'  " + "authorization: " + auth);
             if (this.detail) {
                 e = header.keySet().iterator();
 
@@ -51,63 +56,65 @@ public class WebApp extends NanoHTTPD {
                     System.out.println("  PRM: '" + value + "' = '" + (String) parms.get(value).get(0) + "'");
                 }
             }
-
         }
 
         if (uri.equals("/")) {
             uri = "/index.html";
         }
-        //route special uri
+        // route special uri
+
+        if(!session.getMethod().equals(Method.GET)){
+            return Template.getMethodNotAllowedResponse();
+        }
+        // 405 Method Not Allowed
 
         InputStream in = WatchdogServer.class.getResourceAsStream("/web" + uri);
         Response r = null;
 
+        String authToken;
+        if (auth == null) {
+            authToken = "";
+        } else {
+            authToken = auth.split(" ")[1];
+        }
+
         byte[] fileReadIn;
         if (in == null) {
-            r = getNotFoundResponse();
-        } else {
+            // File not found
+            r = Template.getNotFoundResponse();
+        } else if (uri.contains("/res/")) {
+            // Serve resource files
             try {
                 fileReadIn = IOUtils.toByteArray(in);
-                if(uri.contains("/css/")){
-                    r = newFixedLengthResponse(Response.Status.OK,getMimeTypeForFile(uri),new String(fileReadIn));
-                }
-                else {
-                    r = newFixedLengthResponse(Response.Status.OK,MIME_HTML,new String(fileReadIn));
-                }
+                r = newFixedLengthResponse(Response.Status.OK, getMimeTypeForFile(uri), new String(fileReadIn));
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-        }
-        return r;
-    }
+        } else if (authToken.equals(new String(Base64.getEncoder().encode("root:root".getBytes())))) {
+            // Auth passed
+            try {
+                fileReadIn = IOUtils.toByteArray(in);
+                r = newFixedLengthResponse(Response.Status.OK, MIME_HTML, new String(fileReadIn));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } else {
+            // No auth return 401 error
+            String remoteAddress = header.get("remote-addr");
+            r = Template.getUnauthorizedResponse();
 
-    private Response getNotFoundResponse(){
-        Response r = null;
-        InputStream in = WatchdogServer.class.getResourceAsStream("/web/errHtml/404.html");
-        if (in == null) {
-            r = newFixedLengthResponse(Response.Status.NOT_FOUND,MIME_PLAINTEXT,"Error 404, file not found.");
-        } else {
-            try {
-                r = newFixedLengthResponse(Response.Status.NOT_FOUND,MIME_HTML,new String(IOUtils.toByteArray(in)));
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (!authFailCount.containsKey(remoteAddress)) {
+                authFailCount.put(remoteAddress, 0);
+            }
+
+            if (authFailCount.get(remoteAddress) < authFailTime) {
+                authFailCount.put(remoteAddress, authFailCount.get(remoteAddress) + 1);
+                r.addHeader("WWW-Authenticate", "Basic");
+            } else {
+                authFailCount.put(remoteAddress, -authFailTime);
             }
         }
-        return r;
-    }
-    
-    private Response getUnauthorizedResponse(){
-        Response r = null;
-        InputStream in = WatchdogServer.class.getResourceAsStream("/web/errHtml/401.html");
-        if (in == null) {
-            r = newFixedLengthResponse(Response.Status.UNAUTHORIZED,MIME_PLAINTEXT,"Error 401, Unauthorized.");
-        } else {
-            try {
-                r = newFixedLengthResponse(Response.Status.UNAUTHORIZED,MIME_HTML,new String(IOUtils.toByteArray(in)));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
+
         return r;
     }
 }
