@@ -68,7 +68,6 @@ public class WatchDogLogger {
 
     public void log(Level level, String msg){
         logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
-        allLogger.logger.log(level,"log");
     }
 
     public void severe(String msg){
@@ -100,7 +99,8 @@ public class WatchDogLogger {
     }
 
     public void exception(Level level,Exception e){
-        logger.log(level,"exception occured",e);
+        logger.log(level,"["+Thread.currentThread().getName()+"] exception occured: "+e.getMessage(),e);
+        e.printStackTrace();
     }
 
     public void debug(String msg){
