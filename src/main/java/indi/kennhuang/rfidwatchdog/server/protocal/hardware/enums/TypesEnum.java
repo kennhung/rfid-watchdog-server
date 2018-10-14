@@ -1,4 +1,4 @@
-package indi.kennhuang.rfidwatchdog.server.protocal.enums;
+package indi.kennhuang.rfidwatchdog.server.protocal.hardware.enums;
 
 public class TypesEnum {
     public enum types {

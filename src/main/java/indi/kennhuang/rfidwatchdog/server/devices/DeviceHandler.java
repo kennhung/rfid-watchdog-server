@@ -1,8 +1,8 @@
 package indi.kennhuang.rfidwatchdog.server.devices;
 
 import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
-import indi.kennhuang.rfidwatchdog.server.protocal.HardwareMessage;
-import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
+import indi.kennhuang.rfidwatchdog.server.protocal.hardware.HardwareMessage;
+import indi.kennhuang.rfidwatchdog.server.protocal.hardware.enums.TypesEnum;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.json.JSONObject;
