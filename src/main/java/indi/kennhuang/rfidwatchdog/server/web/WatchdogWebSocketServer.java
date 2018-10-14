@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 public class WatchdogWebSocketServer extends NanoWSD {
 
-    WatchDogLogger logger = null;
+    private WatchDogLogger logger = null;
 
     public WatchdogWebSocketServer(int port, WatchDogLogger logger) {
         super(port);
@@ -22,11 +22,30 @@ public class WatchdogWebSocketServer extends NanoWSD {
 
     private static class WatchdogWebSocket extends WebSocket {
 
-        WatchDogLogger logger;
+        private WatchDogLogger logger;
 
         public WatchdogWebSocket(IHTTPSession handshakeRequest, WatchDogLogger logger) {
             super(handshakeRequest);
             this.logger = logger;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true){
+                        try {
+                            ping("Ping".getBytes());
+                            Thread.sleep(4000);
+                        } catch (IOException e) {
+                            if(e.getMessage().equals("Socket closed")){
+                                break;
+                            }else {
+                                e.printStackTrace();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
         }
 
         @Override
