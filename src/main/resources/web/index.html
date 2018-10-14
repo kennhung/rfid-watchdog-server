@@ -29,7 +29,7 @@
 </script>
 
 <script language="javascript" type="text/javascript">
-    var wsUri = "ws://localhost:6085/";
+    var wsUri = "ws://localhost:6085/testUri";
     var output;
     function init() {
         testWebSocket();
@@ -49,7 +49,6 @@
             onError(evt)
         };
         window.onbeforeunload = function() {
-            // websocket.onclose = function () {}; // disable onclose handler first
             websocket.close();
         };
     }
@@ -62,6 +61,14 @@
     }
     function onMessage(evt) {
         console.log('RESPONSE: ' + evt.data+'');
+        var data = $.parseJSON(evt.data);
+        switch (data.type) {
+            case 0:
+                console.log("Server Internal Error:",data.errorMsg);
+                break;
+            default:
+                break;
+        }
     }
     function onError(evt) {
         console.log('ERROR: ' + evt.data);
