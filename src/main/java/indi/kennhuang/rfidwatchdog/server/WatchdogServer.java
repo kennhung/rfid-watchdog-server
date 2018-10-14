@@ -11,6 +11,7 @@ import java.io.IOException;
 public class WatchdogServer {
     private static DeviceServer deviceserver = new DeviceServer();
     private static WatchDogLogger logger;
+    private static WebApp webapp;
 
     public static void main(String Args[]){
         WatchDogLogger.init();
@@ -26,7 +27,7 @@ public class WatchdogServer {
         }
 
         try {
-            new WebApp(6084,webDebug);
+            webapp = new WebApp(6084,webDebug);
         } catch (IOException ioe) {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }
@@ -35,6 +36,7 @@ public class WatchdogServer {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
+                webapp.stop();
                 WatchDogLogger.close();
                 System.out.println("Logger close");
             }

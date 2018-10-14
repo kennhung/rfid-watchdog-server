@@ -99,6 +99,10 @@ public class WatchDogLogger {
         log(Level.FINEST,msg);
     }
 
+    public void exception(Level level,Exception e){
+        logger.log(level,"exception occured",e);
+    }
+
     public void debug(String msg){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
         System.out.println("["+sdf.format(Calendar.getInstance().getTime())+"] ["+logType.name()+"-DEBUG] ["+Thread.currentThread().getName()+"] "+msg);

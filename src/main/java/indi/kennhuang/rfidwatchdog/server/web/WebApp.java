@@ -1,6 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.web;
 
 import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
@@ -15,6 +16,7 @@ public class WebApp extends NanoHTTPD {
     private boolean detail;
     private WatchDogLogger logger;
     private Map<String, Integer> authFailCount = new HashMap<String, Integer>();
+    private NanoWSD ws;
 
     private static final int authFailTime = 2;
 
@@ -28,6 +30,12 @@ public class WebApp extends NanoHTTPD {
         }
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         logger.info("Running! Point your browsers to http://localhost:" + port + "/");
+        ws = new WatchdogWebSocketServer(6085,logger);
+        ws.start();
+    }
+
+    public void stop(){
+        ws.stop();
     }
 
     @Override

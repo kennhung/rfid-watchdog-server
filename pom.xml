@@ -83,7 +83,7 @@
         </dependency>
         <dependency>
             <groupId>org.nanohttpd</groupId>
-            <artifactId>nanohttpd-webserver</artifactId>
+            <artifactId>nanohttpd-websocket</artifactId>
             <version>2.3.1</version>
         </dependency>
         <dependency>
