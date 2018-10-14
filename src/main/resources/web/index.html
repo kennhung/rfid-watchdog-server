@@ -29,8 +29,7 @@
 </script>
 
 <script language="javascript" type="text/javascript">
-    var wsUri = "ws://localhost:6085/testUri";
-    var output;
+    var wsUri = "ws://localhost:6085/index";
     function init() {
         testWebSocket();
     }
@@ -51,10 +50,13 @@
         window.onbeforeunload = function() {
             websocket.close();
         };
+
+
     }
     function onOpen(evt) {
         console.log("CONNECTED");
-        doSend("WebSocket rocks");
+        var sendJson = JSON.stringify({'type':1,'message':''});
+        websocket.send(sendJson);
     }
     function onClose(evt) {
         console.log("DISCONNECTED");
@@ -62,9 +64,16 @@
     function onMessage(evt) {
         console.log('RESPONSE: ' + evt.data+'');
         var data = $.parseJSON(evt.data);
+        var message = $.parseJSON(data.message);
         switch (data.type) {
             case 0:
                 console.log("Server Internal Error:",data.errorMsg);
+                break;
+            case 1:
+                var day = Math.floor(message.uptime/(3600*24));
+                var hr = Math.floor(message.uptime%(3600*24)/3600);
+                var min = Math.floor(message.uptime%(3600)/60);
+                $("#uptime").html(day+" day "+hr+" hr "+min+" min");
                 break;
             default:
                 break;

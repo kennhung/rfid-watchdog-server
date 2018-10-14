@@ -24,7 +24,7 @@ public class WebSocketServer extends NanoWSD {
         return new WatchdogWebSocket(handshake, logger);
     }
 
-    private static class WatchdogWebSocket extends WebSocket {
+    public static class WatchdogWebSocket extends WebSocket {
         private String uri;
         private WatchDogLogger logger;
         private WebSocketHandler handler;
@@ -37,13 +37,12 @@ public class WebSocketServer extends NanoWSD {
             //TODO route
 
             if(uri.equals("/")||uri.equals("/index")){
-                handler = new indexHandler();
+                handler = new indexHandler(this);
             }
             else {
                 handler = null;
             }
-
-
+            logger.debug("serving with handler: "+handler.getName());
 
             new Thread(() -> {
                 while (true) {
@@ -94,7 +93,7 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onPong(WebSocketFrame webSocketFrame) {
-            logger.debug("P " + webSocketFrame);
+            logger.finest("P " + webSocketFrame);
         }
 
         @Override
