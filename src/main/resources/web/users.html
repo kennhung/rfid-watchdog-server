@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>rfid Watchdog server</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="assets/lib/jquery-3.3.1.min.js"></script>
+    <script src="assets/lib/bootstrap.min.js"></script>
+    <link href="assets/css/main.css" rel="stylesheet">
+</head>
+<body>
+<div id="navBarContainer"></div>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-lg-1">
+
+        </div>
+        <div class="col-lg-10">
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#navBarContainer").load("/navBar.html",function (value) {
+        $("#nav-users").addClass("active");
+    });
+</script>
+
+</body>
+</html>
