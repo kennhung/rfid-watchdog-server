@@ -67,6 +67,7 @@ public class WatchDogLogger {
     }
 
     public void log(Level level, String msg){
+        allLogger.logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
         logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
     }
 
