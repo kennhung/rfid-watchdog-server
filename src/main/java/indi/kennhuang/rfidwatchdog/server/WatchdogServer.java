@@ -2,7 +2,7 @@ package indi.kennhuang.rfidwatchdog.server;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
 import indi.kennhuang.rfidwatchdog.server.devices.DeviceServer;
-import indi.kennhuang.rfidwatchdog.server.util.SystemInfo;
+import indi.kennhuang.rfidwatchdog.server.system.SystemInfo;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import indi.kennhuang.rfidwatchdog.server.web.WebApp;

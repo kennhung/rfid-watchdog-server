@@ -1,18 +1,18 @@
 package indi.kennhuang.rfidwatchdog.server.web.wsHandler;
 
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
-import indi.kennhuang.rfidwatchdog.server.util.SystemInfo;
+import indi.kennhuang.rfidwatchdog.server.system.SystemInfo;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 public class indexHandler implements WebSocketHandler {
 
-    static final int fetchInfoOnLoad = 1;
     private WebSocketServer.WatchdogWebSocket ws;
 
-    public indexHandler(WebSocketServer.WatchdogWebSocket ws){
+    public indexHandler(WebSocketServer.WatchdogWebSocket ws) {
         this.ws = ws;
     }
 
@@ -22,22 +22,26 @@ public class indexHandler implements WebSocketHandler {
     }
 
     @Override
-    public void route(int msgType, String msg) {
-        switch (msgType) {
-            case fetchInfoOnLoad:
-                JSONObject sendJson = new JSONObject();
-                sendJson.put("type",fetchInfoOnLoad);
-                JSONObject content = new JSONObject();
-                content.put("uptime", SystemInfo.getSystemUptime().abs().getSeconds());
-                sendJson.put("message",content.toString());
-                try {
-                    ws.send(sendJson.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                break;
+    public void serve(String msgType, String data) {
+        try {
+            this.getClass().getMethod(msgType, String.class).invoke(this, data);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            try {
+                ws.sendInternalError("Can't fine method of "+msgType);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
     }
+
+    public void getBasicInfo(String data) {
+        try {
+            ws.send("UpdateBasicInfo", SystemInfo.getInfoInJson().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -6,9 +6,6 @@
 
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <script src="assets/lib/jquery-3.3.1.min.js"></script>
-    <script src="assets/lib/bootstrap.min.js"></script>
     <link href="assets/css/main.css" rel="stylesheet">
 </head>
 <body>
@@ -24,71 +21,16 @@
     </div>
 </div>
 
+<script src="assets/lib/jquery-3.3.1.min.js"></script>
+<script src="assets/lib/bootstrap.min.js"></script>
+<script src="assets/lib/jquery.websocket-0.0.1.js"></script>
+<script src="assets/js/WatchdogWebSocket.js"></script>
 <script>
     $("#navBarContainer").load("/navBar.html");
 </script>
+<!-- Static above -->
 
-<script language="javascript" type="text/javascript">
-    var wsUri = "ws://localhost:6085/index";
-    function init() {
-        testWebSocket();
-    }
-    function testWebSocket() {
-        websocket = new WebSocket(wsUri);
-        websocket.onopen = function(evt) {
-            onOpen(evt)
-        };
-        websocket.onclose = function(evt) {
-            onClose(evt)
-        };
-        websocket.onmessage = function(evt) {
-            onMessage(evt)
-        };
-        websocket.onerror = function(evt) {
-            onError(evt)
-        };
-        window.onbeforeunload = function() {
-            websocket.close();
-        };
-
-
-    }
-    function onOpen(evt) {
-        console.log("CONNECTED");
-        var sendJson = JSON.stringify({'type':1,'message':''});
-        websocket.send(sendJson);
-    }
-    function onClose(evt) {
-        console.log("DISCONNECTED");
-    }
-    function onMessage(evt) {
-        console.log('RESPONSE: ' + evt.data+'');
-        var data = $.parseJSON(evt.data);
-        var message = $.parseJSON(data.message);
-        switch (data.type) {
-            case 0:
-                console.log("Server Internal Error:",data.errorMsg);
-                break;
-            case 1:
-                var day = Math.floor(message.uptime/(3600*24));
-                var hr = Math.floor(message.uptime%(3600*24)/3600);
-                var min = Math.floor(message.uptime%(3600)/60);
-                $("#uptime").html(day+" day "+hr+" hr "+min+" min");
-                break;
-            default:
-                break;
-        }
-    }
-    function onError(evt) {
-        console.log('ERROR: ' + evt.data);
-    }
-    function doSend(message) {
-        console.log("SENT: " + message);
-        websocket.send(message);
-    }
-
-    window.addEventListener("load", init);
-</script>
+<script src="assets/js/pageScript/indexPage.js"></script>
 
 </body>
 </html>

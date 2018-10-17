@@ -3,12 +3,14 @@ package indi.kennhuang.rfidwatchdog.server.web;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
+import indi.kennhuang.rfidwatchdog.server.system.NetworkInterfaceInfo;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.*;
 
 public class WebApp extends NanoHTTPD {
@@ -34,7 +36,9 @@ public class WebApp extends NanoHTTPD {
         ws.start();
     }
 
+    @Override
     public void stop(){
+        super.stop();
         ws.stop();
     }
 
@@ -74,7 +78,7 @@ public class WebApp extends NanoHTTPD {
             // 403
             return Template.getForbiddenResponse();
         }
-        // route special uri
+        // serve special uri
 
         if(!session.getMethod().equals(Method.GET)){
             return Template.getMethodNotAllowedResponse();
