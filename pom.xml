@@ -97,5 +97,10 @@
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.profesorfalken</groupId>
+            <artifactId>jSensors</artifactId>
+            <version>2.1.1</version>
+        </dependency>
     </dependencies>
 </project>

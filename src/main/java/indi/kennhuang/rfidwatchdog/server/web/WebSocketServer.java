@@ -7,6 +7,7 @@ import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.logging.Level;
 
 public class WebSocketServer extends NanoWSD {
@@ -48,14 +49,14 @@ public class WebSocketServer extends NanoWSD {
                     try {
                         ping("Ping".getBytes());
                         Thread.sleep(4000);
-                    } catch (IOException e) {
-                        if (e.getMessage().equals("Socket closed")) {
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        if (e.getMessage().equals("Socket closed") || e.getMessage().contains("socket write error")) {
                             break;
                         } else {
                             e.printStackTrace();
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             }).start();

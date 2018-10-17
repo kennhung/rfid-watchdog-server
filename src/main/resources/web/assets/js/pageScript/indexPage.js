@@ -12,6 +12,21 @@ var UpdateBasicInfo = function (event) {
     $("#uptime").html(uptimeStr);
     console.log(JSON.parse(data.network));
     resolveNetworkInfo(JSON.parse(data.network));
+    var sysTemp = data.temp;
+    if(sysTemp>=80){
+        $("#sysTemp").attr("class","badge badge-danger");
+    }
+    else if(sysTemp<80&&sysTemp>=50){
+        $("#sysTemp").attr("class","badge badge-warning");
+    }
+    else{
+        $("#sysTemp").attr("class","badge badge-success");
+    }
+    $("#sysTemp").html(sysTemp);
+    if(sysTemp === 0){
+        $("#sysTemp").attr("class","badge badge-warning");
+        $("#sysTemp").html("N/A");
+    }
 }
 
 websocket = new WatchdogWebsocket(6085, "/index", {

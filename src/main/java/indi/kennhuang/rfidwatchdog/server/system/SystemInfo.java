@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.net.SocketException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 public class SystemInfo {
     public static final String systemVersion = "1.0 SNAPSHOT";
@@ -25,6 +26,7 @@ public class SystemInfo {
         infoOut.put("uptime", getSystemUptimeInSec());
         infoOut.put("sysVersion", systemVersion);
         infoOut.put("network", NetworkInterfaceInfo.getNetworkInterfaceInfo(true,false,false).toString());
+        infoOut.put("temp",TemperatureInfo.getAutoTemp());
         return infoOut;
     }
 
