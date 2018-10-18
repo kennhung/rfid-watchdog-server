@@ -17,6 +17,7 @@ public class SystemInfo {
     public static void serverStart() {
         if (!started) {
             startupTime = Instant.now();
+//            TemperatureInfo.start();
         }
     }
 
@@ -26,7 +27,7 @@ public class SystemInfo {
         infoOut.put("uptime", getSystemUptimeInSec());
         infoOut.put("sysVersion", systemVersion);
         infoOut.put("network", NetworkInterfaceInfo.getNetworkInterfaceInfo(true,false,false).toString());
-        infoOut.put("temp",TemperatureInfo.getAutoTemp());
+        infoOut.put("temp", 0);
         return infoOut;
     }
 
