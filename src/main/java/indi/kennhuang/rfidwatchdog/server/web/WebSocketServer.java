@@ -98,7 +98,12 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onException(IOException e) {
-            logger.exception(Level.SEVERE, e);
+            if (e.getMessage().equals("Socket closed") || e.getMessage().contains("socket write error")) {
+                logger.debug("Socket closed");
+            }
+            else{
+                logger.exception(Level.SEVERE, e);
+            }
         }
 
         public void sendInternalError(String msg) throws IOException {
