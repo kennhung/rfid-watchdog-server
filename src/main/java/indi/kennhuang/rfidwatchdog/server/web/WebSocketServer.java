@@ -7,12 +7,11 @@ import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.logging.Level;
 
 public class WebSocketServer extends NanoWSD {
 
-    private WatchDogLogger logger = null;
+    private WatchDogLogger logger;
 
     public WebSocketServer(int port, WatchDogLogger logger) {
         super(port);
@@ -77,7 +76,7 @@ public class WebSocketServer extends NanoWSD {
         protected void onMessage(WebSocketFrame webSocketFrame) {
             logger.debug("M " + webSocketFrame);
             String receive = webSocketFrame.getTextPayload();
-            JSONObject recJson = null;
+            JSONObject recJson;
             try {
                 recJson = new JSONObject(receive);
                 handler.serve(recJson.getString("type"),recJson.getString("data"));

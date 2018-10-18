@@ -3,7 +3,6 @@ package indi.kennhuang.rfidwatchdog.server.web.wsHandler;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.system.SystemInfo;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

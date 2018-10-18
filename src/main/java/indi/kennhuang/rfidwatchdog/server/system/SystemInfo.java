@@ -1,12 +1,10 @@
 package indi.kennhuang.rfidwatchdog.server.system;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.SocketException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 public class SystemInfo {
     public static final String systemVersion = "1.0 SNAPSHOT";
