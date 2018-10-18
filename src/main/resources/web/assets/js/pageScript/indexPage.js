@@ -31,12 +31,17 @@ var UpdateBasicInfo = function (event) {
 
 websocket = new WatchdogWebsocket(6085, "/index", {
     onload: function(event){
-        websocket.send("getBasicInfo", "all");
+        updateData();
+        setInterval(updateData,5000);
     },
     UpdateBasicInfo: function (event) {
         UpdateBasicInfo(event);
     }
 });
+
+function updateData() {
+    websocket.send("getBasicInfo", "all");
+}
 
 function resolveNetworkInfo(arr) {
     $("#networkInfoList").html("");
