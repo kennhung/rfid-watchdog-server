@@ -3,6 +3,7 @@ package indi.kennhuang.rfidwatchdog.server.web;
 import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
+import indi.kennhuang.rfidwatchdog.server.web.wsHandler.EmptyHandler;
 import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
 import org.json.JSONObject;
 
@@ -39,7 +40,7 @@ public class WebSocketServer extends NanoWSD {
                 handler = new indexHandler(this);
             }
             else {
-                handler = null;
+                handler = new EmptyHandler();
             }
             logger.debug("serving with handler: "+handler.getName());
 
