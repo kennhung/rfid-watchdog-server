@@ -6,9 +6,6 @@
 
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <script src="assets/lib/jquery-3.3.1.min.js"></script>
-    <script src="assets/lib/bootstrap.min.js"></script>
     <link href="assets/css/main.css" rel="stylesheet">
 </head>
 <body>
@@ -25,11 +22,18 @@
     </div>
 </div>
 
+<script src="assets/lib/jquery-3.3.1.min.js"></script>
+<script src="assets/lib/bootstrap.min.js"></script>
+<script src="assets/lib/jquery.websocket-0.0.1.js"></script>
+<script src="assets/js/WatchdogWebSocket.js"></script>
 <script>
     $("#navBarContainer").load("/navBar.html",function (value) {
-        $("#nav-users").addClass("active");
+        $("#nav-index").addClass("active");
     });
 </script>
+<!-- Static above -->
+
+<script src="assets/js/pageScript/usersPage.js"></script>
 
 </body>
 </html>
