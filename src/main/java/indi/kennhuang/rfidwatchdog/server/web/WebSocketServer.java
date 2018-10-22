@@ -4,7 +4,9 @@ import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import indi.kennhuang.rfidwatchdog.server.web.wsHandler.EmptyHandler;
+import indi.kennhuang.rfidwatchdog.server.web.wsHandler.UsersHandler;
 import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -34,16 +36,18 @@ public class WebSocketServer extends NanoWSD {
             super(handshakeRequest);
             this.logger = logger;
             uri = handshakeRequest.getUri();
-            logger.debug("WS Connect '"+uri+"'");
+            logger.debug("WS Connect '" + uri + "'");
             //TODO serve
 
-            if(uri.equals("/")||uri.equals("/index")){
+            if (uri.equals("/") || uri.equals("/index")) {
                 handler = new indexHandler(this);
+            }else if(uri.equals("/users")){
+                handler = new UsersHandler(this);
             }
             else {
                 handler = new EmptyHandler();
             }
-            logger.debug("serving with handler: "+handler.getName());
+            logger.debug("serving with handler: " + handler.getName());
 
             new Thread(() -> {
                 while (true) {
@@ -76,32 +80,25 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onMessage(WebSocketFrame webSocketFrame) {
-            logger.debug("M " + webSocketFrame);
-            String receive = webSocketFrame.getTextPayload();
-            JSONObject recJson;
             try {
-                recJson = new JSONObject(receive);
+                logger.debug("M " + webSocketFrame);
+                String receive = webSocketFrame.getTextPayload();
+                JSONObject recJson;
+                String msgType = null;
+                String data;
+                try {
+                    recJson = new JSONObject(receive);
 
-                String msgType = recJson.getString("type");
-                String data = recJson.getString("data");
-                try {
+                    msgType = recJson.getString("type");
+                    data = recJson.getString("data");
                     handler.getClass().getMethod(msgType, String.class).invoke(handler, data);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    try {
-                        sendInternalError("Can't fine method of "+msgType);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-            catch(Exception e){
-                try {
+                } catch (JSONException | IllegalAccessException | InvocationTargetException e) {
                     sendInternalError(e.getMessage());
-                } catch (IOException IOE) {
-                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    sendInternalError("Can't fine method of " + msgType);
                 }
+            } catch (IOException IOE) {
+                IOE.printStackTrace();
             }
         }
 
@@ -114,8 +111,7 @@ public class WebSocketServer extends NanoWSD {
         protected void onException(IOException e) {
             if (e.getMessage().equals("Socket closed") || e.getMessage().contains("socket write error")) {
                 logger.debug("Socket closed");
-            }
-            else{
+            } else {
                 logger.exception(Level.SEVERE, e);
             }
         }
@@ -124,14 +120,14 @@ public class WebSocketServer extends NanoWSD {
             logger.severe(msg);
             JSONObject errSend = new JSONObject();
             errSend.put("type", "error");
-            errSend.put("data",msg);
+            errSend.put("data", msg);
             send(errSend.toString());
         }
 
         public void send(String type, String data) throws IOException {
             JSONObject sendJson = new JSONObject();
-            sendJson.put("type",type);
-            sendJson.put("data",data);
+            sendJson.put("type", type);
+            sendJson.put("data", data);
             send(sendJson.toString());
         }
     }
