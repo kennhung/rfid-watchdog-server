@@ -52,6 +52,20 @@ public class User {
         return putResult(query);
     }
 
+    public static List<User> getAllUsers() throws SQLException {
+        List<User> usersOut = new ArrayList<User>();
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users");
+        if (query.isClosed()){
+            return null;
+        }
+
+        do {
+            usersOut.add(putResult(query));
+        }while (query.next());
+
+        return usersOut;
+    }
+
     public static int saveUser(User user) throws SQLException {
         ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users where id is " + user.id);
 
