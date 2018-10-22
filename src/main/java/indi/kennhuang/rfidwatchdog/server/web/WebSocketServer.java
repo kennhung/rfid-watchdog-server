@@ -8,6 +8,7 @@ import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public class WebSocketServer extends NanoWSD {
@@ -80,7 +81,20 @@ public class WebSocketServer extends NanoWSD {
             JSONObject recJson;
             try {
                 recJson = new JSONObject(receive);
-                handler.serve(recJson.getString("type"),recJson.getString("data"));
+
+                String msgType = recJson.getString("type");
+                String data = recJson.getString("data");
+                try {
+                    handler.getClass().getMethod(msgType, String.class).invoke(handler, data);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    try {
+                        sendInternalError("Can't fine method of "+msgType);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
             catch(Exception e){
                 try {

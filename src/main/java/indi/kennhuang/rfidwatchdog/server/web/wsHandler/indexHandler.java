@@ -20,21 +20,6 @@ public class indexHandler implements WebSocketHandler {
         return "index";
     }
 
-    @Override
-    public void serve(String msgType, String data) {
-        try {
-            this.getClass().getMethod(msgType, String.class).invoke(this, data);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            try {
-                ws.sendInternalError("Can't fine method of "+msgType);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
     public void getBasicInfo(String data) {
         try {
             ws.send("UpdateBasicInfo", SystemInfo.getInfoInJson().toString());

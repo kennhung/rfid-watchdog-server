@@ -8,8 +8,4 @@ public class EmptyHandler implements WebSocketHandler {
         return "Empty Handler";
     }
 
-    @Override
-    public void serve(String msgType, String msg) {
-
-    }
 }
