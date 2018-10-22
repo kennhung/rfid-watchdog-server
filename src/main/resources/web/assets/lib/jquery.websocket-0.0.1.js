@@ -30,6 +30,7 @@
                     var m = JSON.parse(e.originalEvent.data);
                     var h = $.websocketSettings.events[m.type];
                     if (h) h.call(this, m);
+                    else if($.websocketSettings.notFound) $.websocketSettings.notFound.call(this, m);
                 });
             ws._settings = $.extend($.websocketSettings, s);
             ws._send = ws.send;

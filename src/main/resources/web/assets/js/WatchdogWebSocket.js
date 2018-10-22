@@ -39,6 +39,9 @@ var WatchdogWebsocket = function(port, path, events) {
                 $("#navStatus").html("Disconnected");
                 setTimeout(that.connect, 5000);
             },
+            notFound: function (event) {
+                console.log(event.type, event.data);
+            },
             events: events
         });
     };
