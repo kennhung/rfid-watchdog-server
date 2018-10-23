@@ -59,9 +59,9 @@ public class User {
             return null;
         }
 
-        do {
+        while (query.next()){
             usersOut.add(putResult(query));
-        }while (query.next());
+        }
 
         return usersOut;
     }
