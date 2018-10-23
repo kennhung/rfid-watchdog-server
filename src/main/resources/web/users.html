@@ -7,6 +7,7 @@
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 <body>
 <div id="navBarContainer"></div>
@@ -17,23 +18,79 @@
 
         </div>
         <div class="col-lg-10">
+            <table id="usersTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">uid</th>
+                    <th scope="col">name</th>
+                    <th scope="col">metadata</th>
+                    <th scope="col">groups</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <fieldset disabled>
+                    <label for="editId">Id</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="editId">
+                    </div>
+                </fieldset>
+                <label for="editUID">UID</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="editUID">
+                </div>
+                <label for="editName">Name</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="editName">
+                </div>
+                <label for="editMeta">metadata</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="editMeta">
+                </div>
+                <label for="editGroups">groups</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="editGroups">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editUserSave">Save</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="assets/lib/jquery-3.3.1.min.js"></script>
+<script src="assets/lib/datatables.min.js"></script>
 <script src="assets/lib/bootstrap.min.js"></script>
 <script src="assets/lib/jquery.websocket-0.0.1.js"></script>
 <script src="assets/js/WatchdogWebSocket.js"></script>
+
 <script>
-    $("#navBarContainer").load("/navBar.html",function (value) {
+    $("#navBarContainer").load("/navBar.html", function (value) {
         $("#nav-index").addClass("active");
     });
 </script>
 <!-- Static above -->
 
 <script src="assets/js/pageScript/usersPage.js"></script>
+
 
 </body>
 </html>
