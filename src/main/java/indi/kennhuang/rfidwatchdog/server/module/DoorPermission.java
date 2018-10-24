@@ -19,11 +19,24 @@ public class DoorPermission {
         this.validDate = System.currentTimeMillis() + (31536000 * 10) / 1000L;
     }
 
-    public JSONObject getJSONObject(){
+    public JSONObject getJSONObject() {
+        return decodeDoorPermission(this);
+    }
+
+    public static DoorPermission encodeDoorPermission(JSONObject doorJson) {
+        int doorId = doorJson.getInt("doorId");
+        boolean open = doorJson.getBoolean("open");
+        long validDate = doorJson.getLong("validDate");
+
+        DoorPermission door = new DoorPermission(doorId, open, validDate);
+        return door;
+    }
+
+    public static JSONObject decodeDoorPermission(DoorPermission doorPermission) {
         JSONObject json = new JSONObject();
-        json.put("doorId",doorId);
-        json.put("open",open);
-        json.put("validDate",validDate);
+        json.put("doorId", doorPermission.doorId);
+        json.put("open", doorPermission.open);
+        json.put("validDate", doorPermission.validDate);
         return json;
     }
 }
