@@ -64,12 +64,12 @@ public class User {
         if (query.isClosed()) {
             // This is new user
             SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','" + decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
+                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
         } else {
             // Old user
             SQLite.getStatement().execute("DELETE FROM users WHERE id is " + user.id);
             SQLite.getStatement().execute("INSERT INTO users ( `id`, `name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','" + decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
+                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
         }
         SQLite.getConnection().commit();
         return 0;
@@ -92,36 +92,16 @@ public class User {
         res.name = query.getString("name");
         res.groups = query.getString("groups");
         res.uid = query.getString("uid");
-        res.doors = encodeDoorPermissions(query.getString("doors"));
+        res.doors = DoorPermission.encodeDoorPermissions(query.getString("doors"));
         res.metadata = query.getString("metadata");
         return res;
     }
 
 
-    // DoorPermissions use String and List<DoorPermission>
-    public static List<DoorPermission> encodeDoorPermissions(String in) {
-        List<DoorPermission> doors = new ArrayList<DoorPermission>();
-        JSONArray doorsJSON = new JSONArray(in);
-        for (Object o : doorsJSON) {
-            if (o instanceof JSONObject) {
-                doors.add(DoorPermission.encodeDoorPermission((JSONObject) o));
-            }
-        }
-        return doors;
-    }
 
-    public static String decodeDoorPermissions(List<DoorPermission> in) {
-        Iterator i = in.iterator();
-        JSONArray doors = new JSONArray();
-        while (i.hasNext()){
-            DoorPermission door = (DoorPermission) i.next();
-            doors.put(door.getJSONObject());
-        }
-        return doors.toString();
-    }
 
     public String getDoorPermissionsString(){
-        return decodeDoorPermissions(this.doors);
+        return DoorPermission.decodeDoorPermissions(this.doors);
     }
 
     // User use JSONObject, User
@@ -132,7 +112,7 @@ public class User {
         u.name = userdata.getString("name");
         u.metadata = userdata.getString("metadata");
         u.groups = userdata.getString("groups");
-        u.doors = encodeDoorPermissions(userdata.getString("doors"));
+        u.doors = DoorPermission.encodeDoorPermissions(userdata.getString("doors"));
         return u;
     }
 
@@ -143,7 +123,7 @@ public class User {
         out.put("name", u.name);
         out.put("metadata", u.metadata);
         out.put("groups", u.groups);
-        out.put("doors", decodeDoorPermissions(u.doors));
+        out.put("doors", DoorPermission.decodeDoorPermissions(u.doors));
         return out;
     }
 }
