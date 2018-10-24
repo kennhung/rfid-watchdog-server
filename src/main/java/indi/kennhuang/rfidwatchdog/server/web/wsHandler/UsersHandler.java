@@ -1,5 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.web.wsHandler;
 
+import indi.kennhuang.rfidwatchdog.server.module.Group;
 import indi.kennhuang.rfidwatchdog.server.module.User;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
@@ -35,16 +36,28 @@ public class UsersHandler implements WebSocketHandler {
             }
             ws.send("usersList", usersOut.toString());
         } catch (SQLException e) {
-            try {
-                ws.sendInternalError(e.getMessage());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            sendErr(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void getGroups(String data){
+        try {
+            List groups = Group.getAllGroups();
+            JSONArray groupsOut = new JSONArray();
+            Iterator usersIterator = groups.iterator();
+            while (usersIterator.hasNext()) {
+                Group group = (Group) usersIterator.next();
+                groupsOut.put(Group.decodeGroup(group));
+            }
+            ws.send("groupsList",groupsOut.toString());
+        } catch (SQLException e) {
+            sendErr(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveUser(String data) {
