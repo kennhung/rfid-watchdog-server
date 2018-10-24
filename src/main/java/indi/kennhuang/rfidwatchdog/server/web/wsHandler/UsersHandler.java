@@ -14,6 +14,7 @@ import java.util.List;
 public class UsersHandler implements WebSocketHandler {
 
     private WebSocketServer.WatchdogWebSocket ws;
+
     public UsersHandler(WebSocketServer.WatchdogWebSocket ws) {
         this.ws = ws;
     }
@@ -23,23 +24,16 @@ public class UsersHandler implements WebSocketHandler {
         return "Users";
     }
 
-    public void getUsers(String data){
+    public void getUsers(String data) {
         try {
             JSONArray usersOut = new JSONArray();
             List users = User.getAllUsers();
             Iterator usersIterator = users.iterator();
-            while (usersIterator.hasNext()){
+            while (usersIterator.hasNext()) {
                 User user = (User) usersIterator.next();
-                JSONObject userOut = new JSONObject();
-                userOut.put("name",user.name);
-                userOut.put("uid",user.uid);
-                userOut.put("id",user.id);
-                userOut.put("metadata",user.metadata);
-                userOut.put("groups",user.groups);
-                userOut.put("door",user.getDoorsString());
-                usersOut.put(userOut);
+                usersOut.put(User.decodeUser(user));
             }
-            ws.send("usersList",usersOut.toString());
+            ws.send("usersList", usersOut.toString());
         } catch (SQLException e) {
             try {
                 ws.sendInternalError(e.getMessage());
@@ -53,4 +47,33 @@ public class UsersHandler implements WebSocketHandler {
 
     }
 
+    public void saveUser(String data) {
+        JSONObject editUser = new JSONObject(data);
+        if (!editUser.has("doors")) {
+            try {
+                User u = User.getUserById(editUser.getInt("id"));
+                if (u != null) {
+                    editUser.put("doors", u.getDoorPermissionsString());
+                } else {
+                    editUser.put("doors", new JSONArray().toString());
+                }
+            } catch (SQLException e) {
+                sendErr(e.getMessage());
+            }
+        }
+        User user = User.encodeUser(editUser);
+        try {
+            User.saveUser(user);
+        } catch (SQLException e) {
+            sendErr(e.getMessage());
+        }
+    }
+
+    private void sendErr(String msg) {
+        try {
+            ws.sendInternalError(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

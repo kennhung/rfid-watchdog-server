@@ -18,13 +18,32 @@ $('#usersTable tbody').on('click', 'tr', function () {
 
 websocket = new WatchdogWebsocket(6085, "/users", {
     onload: function (event) {
-        websocket.send("getUsers", "all");
+        getUsers();
     },
     usersList: function (event) {
         var userList = JSON.parse(event.data);
-        console.log(userList)
+        console.log(userList);
+        usersTable.clear();
         userList.forEach(function (data) {
             usersTable.row.add([data.id, data.uid, data.name, data.metadata, data.groups]).draw();
-        })
+        });
     }
 });
+
+function getUsers(){
+    websocket.send("getUsers", "all");
+}
+
+
+$("#editUserSave").on('click',function () {
+    var editUser = {
+        id: $("#editId").val(),
+        uid: $("#editUID").val(),
+        name: $("#editName").val(),
+        metadata: $("#editMeta").val(),
+        groups: $("#editGroups").val()
+    };
+    websocket.send("saveUser", JSON.stringify(editUser));
+    $("#editUserModal").modal('hide');
+    getUsers();
+})
