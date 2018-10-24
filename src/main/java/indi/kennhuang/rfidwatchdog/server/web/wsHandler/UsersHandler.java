@@ -82,6 +82,21 @@ public class UsersHandler implements WebSocketHandler {
         }
     }
 
+    public void deleteUser(String data){
+        int id = Integer.parseInt(data);
+        try {
+            User u = User.getUserById(id);
+            if(u == null){
+                sendErr("User not found");
+            }
+            else{
+                User.deleteUser(u);
+            }
+        } catch (SQLException e) {
+            sendErr(e.getMessage());
+        }
+    }
+
     private void sendErr(String msg) {
         try {
             ws.sendInternalError(msg);

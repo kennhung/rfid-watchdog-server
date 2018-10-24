@@ -20,14 +20,14 @@ var usersTable = $("#usersTable").DataTable({
         },
         {
             "render": function (data, type, row) {
-                return '<button type="button" class="btn btn-warning btn-sm">Edit</button>';
+                return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
             },
             "targets": 5
         }
     ]
 });
 
-$('#usersTable tbody').on('click', 'button', function () {
+$('#usersTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = usersTable.row(parent).data();
     console.log(data);
@@ -37,6 +37,15 @@ $('#usersTable tbody').on('click', 'button', function () {
     $("#editGroups").val(data[3]);
     $("#editMeta").val(data[4]);
     $("#editUserModal").modal('show');
+});
+
+$('#usersTable tbody').on('click', '.deleteBtn', function () {
+    var parent = $(this).parent().parent();
+    var data = usersTable.row(parent).data();
+    console.log(data);
+    $("#deleteConfirmSpan").html(data[2] + "(" + data[1] + ")");
+    $("#deleteConfirmSpan").attr('data', data[0]);
+    $("#deleteConfirmModal").modal('show');
 });
 
 var renewUsersList = function (event) {
@@ -79,5 +88,12 @@ $("#editUserSave").on('click', function () {
     };
     websocket.send("saveUser", JSON.stringify(editUser));
     $("#editUserModal").modal('hide');
+    getUsers();
+})
+
+$("#deleteConfirm").on('click', function () {
+    var deleteId = $("#deleteConfirmSpan").attr("data");
+    websocket.send("deleteUser", deleteId);
+    $("#deleteConfirmModal").modal('hide');
     getUsers();
 })
