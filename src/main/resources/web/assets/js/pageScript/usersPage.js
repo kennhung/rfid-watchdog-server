@@ -27,6 +27,8 @@ var usersTable = $("#usersTable").DataTable({
     ]
 });
 
+$("#usersTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newUser\" class=\"btn btn-outline-dark btn-sm editBtn\">New User</button>")
+
 $('#usersTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = usersTable.row(parent).data();
@@ -76,6 +78,16 @@ websocket = new WatchdogWebsocket(6085, "/users", {
 function getUsers() {
     websocket.send("getUsers", "all");
 }
+
+$("#newUser").on('click', function () {
+    $("#editId").val(0);
+    $("#editUID").val("");
+    $("#editName").val("");
+    $("#editMeta").val(JSON.stringify({}));
+    $("#editGroups").val(JSON.stringify([]));
+
+    $("#editUserModal").modal('show');
+})
 
 $("#editUserSave").on('click', function () {
     var editUser = {
