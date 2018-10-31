@@ -77,7 +77,6 @@ function getUsers() {
     websocket.send("getUsers", "all");
 }
 
-
 $("#editUserSave").on('click', function () {
     var editUser = {
         id: $("#editId").val(),
