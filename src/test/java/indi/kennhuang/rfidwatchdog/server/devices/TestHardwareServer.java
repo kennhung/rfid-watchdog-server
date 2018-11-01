@@ -23,7 +23,7 @@ public class TestHardwareServer {
 
     @Test
     public void testPing() throws InterruptedException {
-        WatchDogLogger.init();
+        WatchDogLogger.init(true);
         new Thread(new DeviceServer()).start();
         SQLite.openDatabase("jdbc:sqlite:test.db");
 

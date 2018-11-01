@@ -17,7 +17,7 @@ public class TestDoorUtil {
 
     @Test
     public void testCheck() {
-        WatchDogLogger.init();
+        WatchDogLogger.init(true);
         SQLite.openDatabase("jdbc:sqlite:test.db");
 
         User user = new User();
