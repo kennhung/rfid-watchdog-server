@@ -104,7 +104,7 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onPong(WebSocketFrame webSocketFrame) {
-            logger.finest("P " + webSocketFrame);
+            logger.debug("P " + webSocketFrame);
         }
 
         @Override
