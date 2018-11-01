@@ -15,20 +15,21 @@ public class WatchdogServer {
     private static WebApp webapp;
 
     public static void main(String Args[]){
-        WatchDogLogger.init();
+
+        boolean debugEnable = false;
+        for(String arg :Args){
+            if(arg.equals("-debug")){
+                debugEnable = true;
+            }
+        }
+
+        WatchDogLogger.init(debugEnable);
         logger = new WatchDogLogger(LogType.Main);
         new Thread(deviceserver).start();
         SQLite.openDatabase("jdbc:sqlite:foo.db");
 
-        boolean webDebug = false;
-        for(String arg :Args){
-            if(arg.equals("-debug")){
-                webDebug = true;
-            }
-        }
-
         try {
-            webapp = new WebApp(6084,webDebug);
+            webapp = new WebApp(6084,debugEnable);
         } catch (IOException ioe) {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }

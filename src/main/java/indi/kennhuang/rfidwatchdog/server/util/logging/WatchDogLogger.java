@@ -18,22 +18,25 @@ public class WatchDogLogger {
 
     private Logger logger;
     private LogType logType;
+    private static boolean debugEnable;
 
-    public static void init() {
+    public static void init(boolean debug) {
+        debugEnable = debug;
+
         System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$s] %5$s %n");
         //set log time format
 
         if (!init) {
             for (LogType type : LogType.values()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH-mm-ss");
-                String filePath = "log/"+type.name()+"/"+sdf.format(Calendar.getInstance().getTime())+".log";
+                String filePath = "log/" + type.name() + "/" + sdf.format(Calendar.getInstance().getTime()) + ".log";
 
                 try {
                     Path path = Paths.get(filePath);
                     Files.createDirectories(path.getParent());
                     Files.createFile(path);
 
-                    loggers.put(type, new LoggerSet(type.name(),filePath));
+                    loggers.put(type, new LoggerSet(type.name(), filePath));
                     loggers.get(type).logger.finest("Logger Start");
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -47,7 +50,7 @@ public class WatchDogLogger {
         }
     }
 
-    public static void close(){
+    public static void close() {
         if (init) {
             for (LogType type : LogType.values()) {
                 loggers.get(type).fh.close();
@@ -57,56 +60,59 @@ public class WatchDogLogger {
     }
 
     public WatchDogLogger(LogType type) {
-        this(type,Level.FINER,Level.FINE);
+        this(type, Level.FINER, Level.FINE);
     }
-    public WatchDogLogger(LogType type, Level consoleLevel, Level fhLevel){
+
+    public WatchDogLogger(LogType type, Level consoleLevel, Level fhLevel) {
         logType = type;
         logger = loggers.get(type).logger;
         loggers.get(logType).consoleHandler.setLevel(consoleLevel);
         loggers.get(logType).fh.setLevel(fhLevel);
     }
 
-    public void log(Level level, String msg){
-        allLogger.logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
-        logger.log(level, "["+Thread.currentThread().getName()+"] "+msg);
+    public void log(Level level, String msg) {
+        allLogger.logger.log(level, "[" + Thread.currentThread().getName() + "] " + msg);
+        logger.log(level, "[" + Thread.currentThread().getName() + "] " + msg);
     }
 
-    public void severe(String msg){
-        log(Level.SEVERE,msg);
+    public void severe(String msg) {
+        log(Level.SEVERE, msg);
     }
 
-    public void warning(String msg){
-        log(Level.WARNING,msg);
+    public void warning(String msg) {
+        log(Level.WARNING, msg);
     }
 
-    public void info(String msg){
-        log(Level.INFO,msg);
+    public void info(String msg) {
+        log(Level.INFO, msg);
     }
 
-    public void config(String msg){
-        log(Level.CONFIG,msg);
+    public void config(String msg) {
+        log(Level.CONFIG, msg);
     }
 
-    public void fine(String msg){
-        log(Level.FINE,msg);
+    public void fine(String msg) {
+        log(Level.FINE, msg);
     }
 
-    public void finer(String msg){
-        log(Level.FINER,msg);
+    public void finer(String msg) {
+        log(Level.FINER, msg);
     }
 
-    public void finest(String msg){
-        log(Level.FINEST,msg);
+    public void finest(String msg) {
+        log(Level.FINEST, msg);
     }
 
-    public void exception(Level level,Exception e){
-        logger.log(level,"["+Thread.currentThread().getName()+"] exception occured: "+e.getMessage(),e);
+    public void exception(Level level, Exception e) {
+        logger.log(level, "[" + Thread.currentThread().getName() + "] exception occured: " + e.getMessage(), e);
         e.printStackTrace();
     }
 
-    public void debug(String msg){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
-        System.out.println("["+sdf.format(Calendar.getInstance().getTime())+"] ["+logType.name()+"-DEBUG] ["+Thread.currentThread().getName()+"] "+msg);
+    public void debug(String msg) {
+        if (debugEnable) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
+            System.out.println("[" + sdf.format(Calendar.getInstance().getTime()) + "] [" + logType.name() + "-DEBUG] [" + Thread.currentThread().getName() + "] " + msg);
+        }
     }
 
 }
