@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class WebApp extends NanoHTTPD {
@@ -104,7 +105,7 @@ public class WebApp extends NanoHTTPD {
             // Serve resource files
             try {
                 fileReadIn = IOUtils.toByteArray(in);
-                r = newFixedLengthResponse(Response.Status.OK, getMimeTypeForFile(uri), new String(fileReadIn));
+                r = newFixedLengthResponse(Response.Status.OK, getMimeTypeForFile(uri), new String(fileReadIn, StandardCharsets.UTF_8));
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -112,7 +113,7 @@ public class WebApp extends NanoHTTPD {
             // Auth passed
             try {
                 fileReadIn = IOUtils.toByteArray(in);
-                r = newFixedLengthResponse(Response.Status.OK, MIME_HTML, new String(fileReadIn));
+                r = newFixedLengthResponse(Response.Status.OK, MIME_HTML, new String(fileReadIn, StandardCharsets.UTF_8));
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
