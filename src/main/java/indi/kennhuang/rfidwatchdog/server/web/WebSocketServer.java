@@ -56,12 +56,14 @@ public class WebSocketServer extends NanoWSD {
                         Thread.sleep(4000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         if (e.getMessage().equals("Socket closed") || e.getMessage().contains("socket write error")) {
                             break;
                         } else {
                             e.printStackTrace();
                         }
+                    } catch (NullPointerException e){
+                        break;
                     }
                 }
             }).start();
