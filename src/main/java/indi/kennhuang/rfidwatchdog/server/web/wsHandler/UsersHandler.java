@@ -29,10 +29,12 @@ public class UsersHandler implements WebSocketHandler {
         try {
             JSONArray usersOut = new JSONArray();
             List users = User.getAllUsers();
-            Iterator usersIterator = users.iterator();
-            while (usersIterator.hasNext()) {
-                User user = (User) usersIterator.next();
-                usersOut.put(User.decodeUser(user));
+            if (users != null) {
+                Iterator usersIterator = users.iterator();
+                while (usersIterator.hasNext()) {
+                    User user = (User) usersIterator.next();
+                    usersOut.put(User.decodeUser(user));
+                }
             }
             ws.send("usersList", usersOut.toString());
         } catch (SQLException e) {
@@ -47,10 +49,12 @@ public class UsersHandler implements WebSocketHandler {
         try {
             List groups = Group.getAllGroups();
             JSONArray groupsOut = new JSONArray();
-            Iterator usersIterator = groups.iterator();
-            while (usersIterator.hasNext()) {
-                Group group = (Group) usersIterator.next();
-                groupsOut.put(Group.decodeGroup(group));
+            if(groups != null) {
+                Iterator usersIterator = groups.iterator();
+                while (usersIterator.hasNext()) {
+                    Group group = (Group) usersIterator.next();
+                    groupsOut.put(Group.decodeGroup(group));
+                }
             }
             ws.send("groupsList",groupsOut.toString());
         } catch (SQLException e) {
