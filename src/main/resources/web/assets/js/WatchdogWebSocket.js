@@ -12,7 +12,7 @@ var WatchdogWebsocket = function(port, path, events) {
         events.error = function(event) {
             // Data is just an error string.
             console.log(event.data);
-            alert(event.data);
+            alert("Error:"+event.data);
         };
     }
 

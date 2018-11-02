@@ -64,7 +64,7 @@ var groups = [];
 
 websocket = new WatchdogWebsocket(6085, "/users", {
     onload: function (event) {
-        websocket.send("getGroups", "all");
+        getGroups();
         getUsers();
     },
     usersList: function (event) {
@@ -77,6 +77,10 @@ websocket = new WatchdogWebsocket(6085, "/users", {
 
 function getUsers() {
     websocket.send("getUsers", "all");
+}
+
+function getGroups(){
+    websocket.send("getGroups", "all");
 }
 
 $("#newUser").on('click', function () {
