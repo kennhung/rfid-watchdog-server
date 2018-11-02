@@ -63,7 +63,7 @@ public class WebSocketServer extends NanoWSD {
                             e.printStackTrace();
                         }
                     } catch (NullPointerException e){
-                        break;
+
                     }
                 }
             }).start();
