@@ -3,9 +3,9 @@ package indi.kennhuang.rfidwatchdog.server.web;
 import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
-import indi.kennhuang.rfidwatchdog.server.web.wsHandler.EmptyHandler;
-import indi.kennhuang.rfidwatchdog.server.web.wsHandler.UsersHandler;
-import indi.kennhuang.rfidwatchdog.server.web.wsHandler.indexHandler;
+import indi.kennhuang.rfidwatchdog.server.web.ws.handler.EmptyHandler;
+import indi.kennhuang.rfidwatchdog.server.web.ws.handler.UsersHandler;
+import indi.kennhuang.rfidwatchdog.server.web.ws.handler.indexHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,7 +71,7 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onOpen() {
-
+            logger.finest("connection create");
         }
 
         @Override

@@ -18,7 +18,7 @@ public class WatchdogServer {
 
         boolean debugEnable = false;
         for(String arg :Args){
-            if(arg.equals("-debug")){
+            if("-debug".equals(arg)){
                 debugEnable = true;
             }
         }

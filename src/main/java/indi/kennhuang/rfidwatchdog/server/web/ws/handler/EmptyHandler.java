@@ -1,4 +1,4 @@
-package indi.kennhuang.rfidwatchdog.server.web.wsHandler;
+package indi.kennhuang.rfidwatchdog.server.web.ws.handler;
 
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 

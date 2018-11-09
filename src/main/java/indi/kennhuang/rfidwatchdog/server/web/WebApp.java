@@ -3,14 +3,12 @@ package indi.kennhuang.rfidwatchdog.server.web;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
-import indi.kennhuang.rfidwatchdog.server.system.NetworkInterfaceInfo;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 

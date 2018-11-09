@@ -10,7 +10,7 @@ import java.io.InputStream;
 import static fi.iki.elonen.NanoHTTPD.*;
 
 public class Template {
-    public static NanoHTTPD.Response getNotFoundResponse() {
+    public static Response getNotFoundResponse() {
         NanoHTTPD.Response r = getTemplateFromFile(Response.Status.NOT_FOUND,"/web/errHtml/404.html");
         if (r == null) {
             r = newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Error 404, file not found.");
@@ -18,10 +18,10 @@ public class Template {
         return r;
     }
 
-    public static NanoHTTPD.Response getUnauthorizedResponse() {
-        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.UNAUTHORIZED,"/web/errHtml/401.html");
+    public static Response getUnauthorizedResponse() {
+        Response r = getTemplateFromFile(Response.Status.UNAUTHORIZED,"/web/errHtml/401.html");
         if (r == null) {
-            r = newFixedLengthResponse(NanoHTTPD.Response.Status.UNAUTHORIZED, MIME_PLAINTEXT, "Error 401, Unauthorized.");
+            r = newFixedLengthResponse(Response.Status.UNAUTHORIZED, MIME_PLAINTEXT, "Error 401, Unauthorized.");
         }
         return r;
     }
@@ -35,9 +35,9 @@ public class Template {
     }
 
     public static Response getForbiddenResponse(){
-        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.FORBIDDEN,"/web/errHtml/403.html");
+        Response r = getTemplateFromFile(Response.Status.FORBIDDEN,"/web/errHtml/403.html");
         if (r == null) {
-            r = newFixedLengthResponse(NanoHTTPD.Response.Status.FORBIDDEN, MIME_PLAINTEXT, "Error 403, Forbidden.");
+            r = newFixedLengthResponse(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "Error 403, Forbidden.");
         }
         return r;
     }
