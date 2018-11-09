@@ -21,7 +21,7 @@ public class TestHardwareServer {
     Socket socket = null;
     boolean closed = false;
 
-    @Test
+
     public void testPing() throws InterruptedException {
         WatchDogLogger.init(true);
         new Thread(new DeviceServer()).start();

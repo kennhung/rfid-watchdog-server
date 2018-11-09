@@ -42,8 +42,7 @@ jobs:
     - save_cache:
         paths:
         - ~/.m2
-        key: v1-dependencies-{{ checksum "pom.xml" }}
-
+        key: project-{{ checksum "pom.xml" }}
     - run: mvn validate
     - run: mvn compile
     - save_cache:
