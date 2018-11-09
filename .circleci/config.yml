@@ -1,75 +1,93 @@
 version: 2 # use CircleCI 2.0
+references:
+  container_config: &container_config
+    docker:
+    - image: circleci/openjdk:8-jdk-browsers
+    working_directory: ~/repo
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+  workspace_root: &workspace_root
+                    /tmp/workspace
+
+  attach_workspace: &attach_workspace
+    attach_workspace:
+      at: *workspace_root
+
+  restore_repo: &restore_repo
+    restore_cache:
+      keys:
+      - v1-repo-{{ .Branch }}-{{ .Revision }}
+      - v1-repo-{{ .Branch }}
+      - v1-repo
+  jars_cache_key: &jars_cache_key
+                    project-{{ checksum "pom.xml" }}
+  restore_jars: &restore_jars
+    restore_cache:
+      keys:
+      - *jars_cache_key
 jobs:
   build:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/openjdk:8-jdk-browsers
-    environment:
-          MAVEN_OPTS: -Xmx3200m
+    <<: *container_config
     steps:
-      - checkout
+    - checkout
 
-      - run:
-          name: Show current branch
-          command: echo ${CIRCLE_BRANCH}
+    - run:
+        name: Show current branch
+        command: echo ${CIRCLE_BRANCH}
 
-      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
-          key: project-{{ checksum "pom.xml" }}
+    - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+        key: project-{{ checksum "pom.xml" }}
 
-      - run:
-          name: Maven clean
-          command: mvn clean
+    - run: mvn dependency:go-offline
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: v1-dependencies-{{ checksum "pom.xml" }}
 
-      - run: mvn dependency:go-offline
-
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-
-
-      - run: mvn validate
-      - run: mvn compile
+    - run: mvn validate
+    - run: mvn compile
   test:
-    docker:
-      - image: circleci/openjdk:8-jdk-browsers
+    <<: *container_config
     steps:
-      - checkout
-      - run: mvn test
-      - run:
-          name: Save test results
-          command: |
-            mkdir -p ~/junit/
-            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
-          when: always
-      - store_test_results:
-          path: ~/junit
-      - store_artifacts:
-          path: ~/junit
+    - *restore_repo
+    - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+        key: project-{{ checksum "pom.xml" }}
+    - run: mvn test
+    - run:
+        name: Save test results
+        command: |
+          mkdir -p ~/junit/
+          find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/junit/ \;
+        when: always
+    - store_test_results:
+        path: ~/junit
+    - store_artifacts:
+        path: ~/junit
   deploy:
-    docker:
-      - image: circleci/openjdk:8-jdk-browsers
+    <<: *container_config
     steps:
-      - checkout
-      - run: mvn package
-      - run:
-          name: Deploy Master to Heroku
-          command: |
-                      git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+    - *restore_repo
+    - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+        key: project-{{ checksum "pom.xml" }}
+    - run: mvn package
+    - run:
+        name: Deploy Master to Heroku
+        command: |
+          git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
-      - test:
-          requires:
-          -  build
-      - deploy:
-          requires:
-          - test
-          filters:
-            branches:
-              only:
-              - master
+    - build
+    - test:
+        requires:
+        - build
+    - deploy:
+        requires:
+        - test
+        filters:
+          branches:
+            only:
+            - master
 
