@@ -46,6 +46,10 @@ jobs:
 
     - run: mvn validate
     - run: mvn compile
+    - save_cache:
+        key: v1-repo-{{ .Branch }}-{{ .Revision }}
+        paths:
+        - .
   test:
     <<: *container_config
     steps:
