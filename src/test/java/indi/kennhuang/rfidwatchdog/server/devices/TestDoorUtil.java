@@ -4,7 +4,7 @@ import indi.kennhuang.rfidwatchdog.server.db.SQLite;
 import indi.kennhuang.rfidwatchdog.server.devices.util.DoorUtil;
 import indi.kennhuang.rfidwatchdog.server.module.DoorPermission;
 import indi.kennhuang.rfidwatchdog.server.module.User;
-import indi.kennhuang.rfidwatchdog.server.protocal.enums.TypesEnum;
+import indi.kennhuang.rfidwatchdog.server.protocal.hardware.enums.TypesEnum;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class TestDoorUtil {
 
     @Test
     public void testCheck() {
-        WatchDogLogger.init();
+        WatchDogLogger.init(true);
         SQLite.openDatabase("jdbc:sqlite:test.db");
 
         User user = new User();

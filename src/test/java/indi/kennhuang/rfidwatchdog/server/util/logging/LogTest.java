@@ -9,7 +9,7 @@ public class LogTest {
 
     @Test
     public void TestLoggerInit(){
-        WatchDogLogger.init();
+        WatchDogLogger.init(true);
         WatchDogLogger log = new WatchDogLogger(LogType.WatchDogLogger);
         log.log(Level.FINEST,"Test");
     }

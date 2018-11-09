@@ -88,3 +88,4 @@ fabric.properties
 
 *.db
 .idea/dataSources.xml
+*.lck

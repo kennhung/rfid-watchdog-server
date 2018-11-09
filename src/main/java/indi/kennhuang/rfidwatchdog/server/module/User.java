@@ -1,7 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.ResultSet;
@@ -26,16 +26,6 @@ public class User {
         metadata = "{}";
     }
 
-    public String getDoorsString(){
-        DoorPermission[] doorsPermission = new DoorPermission[doors.size()];
-        doorsPermission = doors.toArray(doorsPermission);
-        JSONArray doors = new JSONArray();
-        for (int i = 0; i < doorsPermission.length; i++) {
-            doors.put(doorsPermission[i].getJSONObject());
-        }
-        return doors.toString();
-    }
-
     public static User getUserById(int id) throws SQLException {
         ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users where id is " + id);
         if (query.isClosed()) {
@@ -52,18 +42,32 @@ public class User {
         return putResult(query);
     }
 
+    public static List<User> getAllUsers() throws SQLException {
+        List<User> usersOut = new ArrayList<User>();
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users");
+        if (query.isClosed()) {
+            return null;
+        }
+
+        while (query.next()) {
+            usersOut.add(putResult(query));
+        }
+
+        return usersOut;
+    }
+
     public static int saveUser(User user) throws SQLException {
         ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users where id is " + user.id);
 
         if (query.isClosed()) {
             // This is new user
             SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','" + user.getDoorsString() + "','" + user.metadata + "')");
+                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
         } else {
             // Old user
             SQLite.getStatement().execute("DELETE FROM users WHERE id is " + user.id);
             SQLite.getStatement().execute("INSERT INTO users ( `id`, `name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','" + user.getDoorsString() + "','" + user.metadata + "')");
+                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
         }
         SQLite.getConnection().commit();
         return 0;
@@ -86,13 +90,38 @@ public class User {
         res.name = query.getString("name");
         res.groups = query.getString("groups");
         res.uid = query.getString("uid");
-        JSONArray doorsArr = new JSONArray(query.getString("doors"));
-        for (int i = 0; i < doorsArr.length(); i++) {
-            JSONObject door = doorsArr.getJSONObject(i);
-            DoorPermission permission = new DoorPermission(door.getInt("doorId"), door.getBoolean("open"), door.getLong("validDate"));
-            res.doors.add(permission);
-        }
+        res.doors = DoorPermission.encodeDoorPermissions(query.getString("doors"));
         res.metadata = query.getString("metadata");
         return res;
+    }
+
+
+
+
+    public String getDoorPermissionsString(){
+        return DoorPermission.decodeDoorPermissions(this.doors);
+    }
+
+    // User use JSONObject, User
+    public static User encodeUser(JSONObject userdata) throws JSONException {
+        User u = new User();
+        u.id = userdata.getInt("id");
+        u.uid = userdata.getString("uid");
+        u.name = userdata.getString("name");
+        u.metadata = userdata.getString("metadata");
+        u.groups = userdata.getString("groups");
+        u.doors = DoorPermission.encodeDoorPermissions(userdata.getString("doors"));
+        return u;
+    }
+
+    public static JSONObject decodeUser(User u) {
+        JSONObject out = new JSONObject();
+        out.put("id", u.id);
+        out.put("uid", u.uid);
+        out.put("name", u.name);
+        out.put("metadata", u.metadata);
+        out.put("groups", u.groups);
+        out.put("doors", DoorPermission.decodeDoorPermissions(u.doors));
+        return out;
     }
 }

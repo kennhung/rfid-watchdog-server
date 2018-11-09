@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>rfid Watchdog server</title>
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+</head>
+<body>
+
+
+<div id="navBarContainer"></div>
+
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-lg-1">
+
+        </div>
+        <div class="col-lg-10">
+            <div class="card-columns">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Server Overview</h5>
+                        <table class="table table-striped table-sm">
+                            <tbody>
+                            <tr>
+                                <th>Version</th>
+                                <td><span id="version" class="badge badge-info">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Uptime</th>
+                                <td><span id="uptime" class="badge badge-secondary">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>Hardware Clients</th>
+                                <td><span id="hardwareClients" class="badge badge-secondary">N/A</span></td>
+                            </tr>
+                            <tr>
+                                <th>System temperature</th>
+                                <td><span id="sysTemp" class="badge badge-success">N/A</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Network</h5>
+                        <ul class="list-group" id="networkInfoList">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- System -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Hardware Server <span id="hardwareStatus" class="badge badge-warning">N/A</span></h5>
+
+                    </div>
+                </div>
+                <!-- Hardware Server -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Web App <span id="webStatus" class="badge badge-success">Good</span></h5>
+                    </div>
+                </div>
+                <!-- Web App -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="assets/lib/jquery-3.3.1.min.js"></script>
+<script src="assets/lib/bootstrap.min.js"></script>
+<script src="assets/lib/jquery.websocket-0.0.1.js"></script>
+<script src="assets/js/WatchdogWebSocket.js"></script>
+<script>
+    $("#navBarContainer").load("/navBar.html",function (value) {
+        $("#nav-index").addClass("active");
+    });
+</script>
+<!-- Static above -->
+
+<script src="assets/js/pageScript/indexPage.js"></script>
+
+</body>
+</html>
