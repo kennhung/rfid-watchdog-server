@@ -53,6 +53,7 @@ jobs:
   test:
     <<: *container_config
     steps:
+    - *attach_workspace
     - *restore_repo
     - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
         key: project-{{ checksum "pom.xml" }}
