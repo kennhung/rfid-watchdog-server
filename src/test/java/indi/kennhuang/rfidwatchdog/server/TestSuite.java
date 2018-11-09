@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(value = Suite.class)
-@Suite.SuiteClasses(value={TestHardwareServer.class, TestUser.class, TestDoorUtil.class})
+@Suite.SuiteClasses(value={TestUser.class, TestDoorUtil.class})
 public class TestSuite {
 
 }
