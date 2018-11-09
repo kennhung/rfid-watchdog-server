@@ -20,11 +20,10 @@ public class DeviceHandler implements Runnable {
     private Socket clientSocket;
     private Timer pingTimer;
     private DataOutputStream output = null;
-    private Instant lastPing = null;
 
-    private String auth_token;
+//    private String auth_token;
     private boolean auth;
-    private int connDoor_id;
+//    private int connDoor_id;
     private boolean looping = true;
 
     private WatchDogLogger logger;
@@ -49,7 +48,7 @@ public class DeviceHandler implements Runnable {
             pingTimer = new Timer();
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
 
-            lastPing = Instant.now();
+            Instant lastPing = Instant.now();
             while (looping) {
                 boolean doReply = true;
                 long pingTime = Duration.between(lastPing, Instant.now()).abs().getSeconds();
