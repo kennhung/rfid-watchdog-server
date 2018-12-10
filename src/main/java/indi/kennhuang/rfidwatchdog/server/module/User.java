@@ -14,16 +14,20 @@ public class User {
     public String name;
     public String groups;
     public String uid;
-    public List<DoorPermission> doors;
     public String metadata;
+    public long validate;
+    public boolean enable;
+    public String password;
 
     public User() {
         name = "";
         groups = "[]";
         id = 0;
         uid = "";
-        doors = new ArrayList<DoorPermission>();
         metadata = "{}";
+        validate = 0;
+        enable = true;
+        password = "";
     }
 
     public static User getUserById(int id) throws SQLException {
@@ -61,13 +65,13 @@ public class User {
 
         if (query.isClosed()) {
             // This is new user
-            SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
+            SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `metadata`)" +
+                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata + "')");
         } else {
             // Old user
             SQLite.getStatement().execute("DELETE FROM users WHERE id is " + user.id);
-            SQLite.getStatement().execute("INSERT INTO users ( `id`, `name`, `groups`,`uid`, `doors`, `metadata`)" +
-                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','" + DoorPermission.decodeDoorPermissions(user.doors) + "','" + user.metadata + "')");
+            SQLite.getStatement().execute("INSERT INTO users ( `id`, `name`, `groups`,`uid`, `metadata`)" +
+                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata + "')");
         }
         SQLite.getConnection().commit();
         return 0;
@@ -90,16 +94,11 @@ public class User {
         res.name = query.getString("name");
         res.groups = query.getString("groups");
         res.uid = query.getString("uid");
-        res.doors = DoorPermission.encodeDoorPermissions(query.getString("doors"));
         res.metadata = query.getString("metadata");
+        res.validate = query.getLong("validate");
+        res.enable = query.getBoolean("enable");
+        res.password = query.getString("password");
         return res;
-    }
-
-
-
-
-    public String getDoorPermissionsString(){
-        return DoorPermission.decodeDoorPermissions(this.doors);
     }
 
     // User use JSONObject, User
@@ -110,7 +109,9 @@ public class User {
         u.name = userdata.getString("name");
         u.metadata = userdata.getString("metadata");
         u.groups = userdata.getString("groups");
-        u.doors = DoorPermission.encodeDoorPermissions(userdata.getString("doors"));
+        u.validate = userdata.getLong("validate");
+        u.enable = userdata.getBoolean("enable");
+        u.password = userdata.getString("password");
         return u;
     }
 
@@ -121,7 +122,9 @@ public class User {
         out.put("name", u.name);
         out.put("metadata", u.metadata);
         out.put("groups", u.groups);
-        out.put("doors", DoorPermission.decodeDoorPermissions(u.doors));
+        out.put("validate",u.validate);
+        out.put("enable",u.enable);
+        out.put("password",u.password);
         return out;
     }
 }
