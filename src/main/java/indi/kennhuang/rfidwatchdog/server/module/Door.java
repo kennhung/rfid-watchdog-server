@@ -8,19 +8,21 @@ import indi.kennhuang.rfidwatchdog.server.module.permission.PermissionBlock;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Door {
     public int id;
     public String name;
     public String auth_token;
-    public List<PermissionBlock> permissionBlocks;
+    public Map<Integer,PermissionBlock> permissionBlocks;
 
     public Door(){
         id = 0;
         name = "";
         auth_token = "";
-        permissionBlocks = new ArrayList<PermissionBlock>();
+        permissionBlocks = new HashMap<Integer, PermissionBlock>();
     }
 
     public static Door findDoorById(int id) throws SQLException {

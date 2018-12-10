@@ -4,7 +4,9 @@ import indi.kennhuang.rfidwatchdog.server.module.Group;
 import indi.kennhuang.rfidwatchdog.server.module.User;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
+import netscape.javascript.JSException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -45,7 +47,7 @@ public class UsersHandler implements WebSocketHandler {
         }
     }
 
-    public void getGroups(String data){
+    public void getGroups(String data) {
         try {
             List groups = Group.getAllGroups();
             JSONArray groupsOut = new JSONArray();
@@ -66,22 +68,10 @@ public class UsersHandler implements WebSocketHandler {
 
     public void saveUser(String data) {
         JSONObject editUser = new JSONObject(data);
-        if (!editUser.has("doors")) {
-            try {
-                User u = User.getUserById(editUser.getInt("id"));
-                if (u != null) {
-                    editUser.put("doors", u.getDoorPermissionsString());
-                } else {
-                    editUser.put("doors", new JSONArray().toString());
-                }
-            } catch (SQLException e) {
-                sendErr(e.getMessage());
-            }
-        }
-        User user = User.encodeUser(editUser);
         try {
+            User user = User.encodeUser(editUser);
             User.saveUser(user);
-        } catch (SQLException e) {
+        } catch (SQLException| JSONException e) {
             sendErr(e.getMessage());
         }
     }

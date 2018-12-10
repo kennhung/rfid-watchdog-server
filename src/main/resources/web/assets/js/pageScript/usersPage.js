@@ -99,7 +99,10 @@ $("#editUserSave").on('click', function () {
         uid: $("#editUID").val(),
         name: $("#editName").val(),
         metadata: $("#editMeta").val(),
-        groups: $("#editGroups").val()
+        groups: $("#editGroups").val(),
+        validate: $("#editValidate").val(),
+        enable: true,
+        password: ""
     };
     websocket.send("saveUser", JSON.stringify(editUser));
     $("#editUserModal").modal('hide');

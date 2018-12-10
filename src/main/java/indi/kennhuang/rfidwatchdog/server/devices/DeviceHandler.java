@@ -69,7 +69,7 @@ public class DeviceHandler implements Runnable {
                             switch (message.type) {
                                 case CARD_CHECK:
                                     reply.type = TypesEnum.types.RESPONSE;
-                                    JSONObject checkResult = DoorUtil.check(message.content);
+                                    JSONObject checkResult = DoorUtil.check(message.content, logger);
                                     reply.content = new JSONObject().put("reply", checkResult.toString());
                                     System.out.println(HardwareMessage.decodeMessage(reply));
                                     break;

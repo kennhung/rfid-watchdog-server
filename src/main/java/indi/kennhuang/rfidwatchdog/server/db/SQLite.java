@@ -28,14 +28,14 @@ public class SQLite {
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS users " +
-                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` string, `groups` string, `uid` TEXT,  " +
-                    "`metadata` TEXT , `validate` long, `enable` boolean, `password` string)");
+                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `groups` TEXT, `uid` TEXT,  " +
+                    "`metadata` TEXT , `validate` numeric, `enable` boolean, `password` TEXT)");
             // Users
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS groups " +
-                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `doors` TEXT )");
+                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
             // Groups
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS doors " +
-                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `auth_token` TEXT )");
+                    "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `auth_token` TEXT, `permission_blocks` TEXT)");
             /// Doors
             connection.commit();
         } catch (SQLException e) {

@@ -17,7 +17,6 @@ public class TestUser {
 
         User user = new User();
         user.metadata = "{}";
-        user.doors.add(new DoorPermission(2, true));
         user.name = "TestUser";
         user.uid = "TESTUID";
         user.metadata = "{\"test\":true}";
