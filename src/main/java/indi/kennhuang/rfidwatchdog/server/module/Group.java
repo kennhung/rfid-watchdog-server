@@ -19,18 +19,6 @@ public class Group {
         name = "";
     }
 
-    public static void saveGroup(Group g) throws SQLException {
-        if (findGroupById(g.id) == null) {
-            // new group
-            SQLite.getStatement().execute("insert into groups (`name` ) values ('" + g.name + "' )");
-        } else {
-            // old group
-            SQLite.getStatement().execute("delete from groups where id is " + g.id);
-            SQLite.getStatement().execute("insert into groups (`id`, `name` ) values (" + g.id + ",'" + g.name + "')");
-        }
-        SQLite.getConnection().commit();
-    }
-
     public static Group findGroupById(int id) throws SQLException {
         ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM groups where id is " + id);
         if (query.isClosed()) {
@@ -59,6 +47,20 @@ public class Group {
         }
 
         return groupsOut;
+    }
+    // get
+
+
+    public static void saveGroup(Group g) throws SQLException {
+        if (findGroupById(g.id) == null) {
+            // new group
+            SQLite.getStatement().execute("insert into groups (`name` ) values ('" + g.name + "' )");
+        } else {
+            // old group
+            SQLite.getStatement().execute("delete from groups where id is " + g.id);
+            SQLite.getStatement().execute("insert into groups (`id`, `name` ) values (" + g.id + ",'" + g.name + "')");
+        }
+        SQLite.getConnection().commit();
     }
 
     private static Group putResult(ResultSet query) throws SQLException {
