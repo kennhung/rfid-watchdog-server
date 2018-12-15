@@ -19,7 +19,7 @@ public class Permission {
     public static Permission encodePermission(JSONObject json){
         Permission p = new Permission();
         p.admin = json.getBoolean("admin");
-        p.open = json.getBoolean("admin");
+        p.open = json.getBoolean("open");
         return p;
     }
 
