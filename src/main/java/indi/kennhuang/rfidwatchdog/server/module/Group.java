@@ -19,8 +19,28 @@ public class Group {
         name = "";
     }
 
+    public static void saveGroup(Group g) throws SQLException {
+        if (findGroupById(g.id) == null) {
+            // new group
+            SQLite.getStatement().execute("insert into groups (`name` ) values ('" + g.name + "' )");
+        } else {
+            // old group
+            SQLite.getStatement().execute("delete from groups where id is " + g.id);
+            SQLite.getStatement().execute("insert into groups (`id`, `name` ) values (" + g.id + ",'" + g.name + "')");
+        }
+        SQLite.getConnection().commit();
+    }
+
     public static Group findGroupById(int id) throws SQLException {
         ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM groups where id is " + id);
+        if (query.isClosed()) {
+            return null;
+        }
+        return putResult(query);
+    }
+
+    public static Group findGroupByName(String name) throws SQLException {
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM groups where name is '" + name +"'");
         if (query.isClosed()) {
             return null;
         }
@@ -48,10 +68,10 @@ public class Group {
         return res;
     }
 
-    public static JSONObject decodeGroup(Group g){
+    public static JSONObject decodeGroup(Group g) {
         JSONObject out = new JSONObject();
-        out.put("id",g.id);
-        out.put("name",g.name);
+        out.put("id", g.id);
+        out.put("name", g.name);
         return out;
     }
 

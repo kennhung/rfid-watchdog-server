@@ -66,13 +66,14 @@ public class User {
             // This is new user
             SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `metadata`, `validate`," +
                     " `enable`, `password`)" +
-                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata +"','"  + user.validate+"','"  + user.enable+"','"  + user.password+ "')");
+                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata +
+                    "',"  + user.validate+",'"  + user.enable+"','"  + user.password+ "')");
         } else {
             // Old user
             SQLite.getStatement().execute("DELETE FROM users WHERE id is " + user.id);
             SQLite.getStatement().execute("INSERT INTO users (`id`,`name`, `groups`,`uid`, `metadata`, `validate`," +
                     " `enable`, `password`)" +
-                    "VALUES ('" + user.id + "','" + user.name + "','" + user.groups + "','" + user.uid + "','"
+                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','"
                     + user.metadata +"','"  + user.validate+"','"  + user.enable+"','"  + user.password+ "')");
         }
         SQLite.getConnection().commit();
