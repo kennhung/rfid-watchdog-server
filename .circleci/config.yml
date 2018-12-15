@@ -56,7 +56,7 @@ jobs:
     - *restore_repo
     - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
         key: project-{{ checksum "pom.xml" }}
-    - run: mvn test
+    - run: mvn test -Dtest=TestSuite
     - run:
         name: Save test results
         command: |

@@ -7,6 +7,9 @@ import indi.kennhuang.rfidwatchdog.server.protocal.hardware.enums.TypesEnum;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.json.JSONObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -16,6 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestDoorUtil {
 
+    @BeforeClass
+    public static void setup(){
+        WatchDogLogger.init(true);
+        SQLite.openDatabase("jdbc:sqlite:test.db");
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        SQLite.closeDatabase();
+    }
+
+    @Ignore
     @Test
     public void testCheck() {
         WatchDogLogger.init(true);

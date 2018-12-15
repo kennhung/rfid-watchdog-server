@@ -2,6 +2,9 @@ package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -10,11 +13,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestUser {
 
-    @Test
-    public void testCheck() {
+    @BeforeClass
+    public static void setup(){
         WatchDogLogger.init(true);
         SQLite.openDatabase("jdbc:sqlite:test.db");
+    }
 
+    @AfterClass
+    public static void tearDown() {
+        SQLite.closeDatabase();
+    }
+
+
+    @Test
+    public void testCheck() {
         User user = new User();
         user.metadata = "{}";
         user.name = "TestUser";
@@ -42,6 +54,6 @@ public class TestUser {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        SQLite.closeDatabase();
+
     }
 }
