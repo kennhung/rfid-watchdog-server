@@ -68,6 +68,13 @@ public class Group {
         return res;
     }
 
+    public static Group encodeGroup(JSONObject json){
+        Group g = new Group();
+        g.id = json.getInt("id");
+        g.name = json.getString("name");
+        return g;
+    }
+
     public static JSONObject decodeGroup(Group g) {
         JSONObject out = new JSONObject();
         out.put("id", g.id);
