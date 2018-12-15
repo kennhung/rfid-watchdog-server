@@ -61,17 +61,19 @@ public class User {
     }
 
     public static int saveUser(User user) throws SQLException {
-        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users where id is " + user.id);
-
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM users where id is '" + user.id + "' or uid is '"+ user.uid+"'");
         if (query.isClosed()) {
             // This is new user
-            SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `metadata`)" +
-                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata + "')");
+            SQLite.getStatement().execute("INSERT INTO users (`name`, `groups`,`uid`, `metadata`, `validate`," +
+                    " `enable`, `password`)" +
+                    "VALUES ('" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata +"','"  + user.validate+"','"  + user.enable+"','"  + user.password+ "')");
         } else {
             // Old user
             SQLite.getStatement().execute("DELETE FROM users WHERE id is " + user.id);
-            SQLite.getStatement().execute("INSERT INTO users ( `id`, `name`, `groups`,`uid`, `metadata`)" +
-                    "VALUES (" + user.id + ",'" + user.name + "','" + user.groups + "','" + user.uid + "','"  + user.metadata + "')");
+            SQLite.getStatement().execute("INSERT INTO users (`id`,`name`, `groups`,`uid`, `metadata`, `validate`," +
+                    " `enable`, `password`)" +
+                    "VALUES ('" + user.id + "','" + user.name + "','" + user.groups + "','" + user.uid + "','"
+                    + user.metadata +"','"  + user.validate+"','"  + user.enable+"','"  + user.password+ "')");
         }
         SQLite.getConnection().commit();
         return 0;
