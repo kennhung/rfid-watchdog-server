@@ -52,6 +52,10 @@ public class TestDoor {
         assertEquals(pb.permission.open,gpb.permission.open);
         assertEquals(pb.permission.admin,gpb.permission.admin);
 
-        Door.deleteDoor(d);
+        Door.deleteDoor(dd);
+
+        dd = Door.findDoorByName(d.name);
+
+        assertSame(null,dd);
     }
 }
