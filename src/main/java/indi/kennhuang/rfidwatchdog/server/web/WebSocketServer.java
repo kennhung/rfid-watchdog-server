@@ -132,5 +132,13 @@ public class WebSocketServer extends NanoWSD {
             sendJson.put("data", data);
             send(sendJson.toString());
         }
+
+        public void sendErr(String msg) {
+            try {
+                sendInternalError(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
