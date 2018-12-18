@@ -4,6 +4,7 @@ import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import indi.kennhuang.rfidwatchdog.server.web.ws.handler.EmptyHandler;
+import indi.kennhuang.rfidwatchdog.server.web.ws.handler.GroupsHandler;
 import indi.kennhuang.rfidwatchdog.server.web.ws.handler.UsersHandler;
 import indi.kennhuang.rfidwatchdog.server.web.ws.handler.IndexHandler;
 import org.json.JSONException;
@@ -43,6 +44,9 @@ public class WebSocketServer extends NanoWSD {
                 handler = new IndexHandler(this);
             }else if(uri.equals("/users")){
                 handler = new UsersHandler(this);
+            }
+            else if(uri.equals("/groups")){
+                handler = new GroupsHandler(this);
             }
             else {
                 handler = new EmptyHandler();

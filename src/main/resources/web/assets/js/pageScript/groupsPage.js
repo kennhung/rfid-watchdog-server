@@ -31,3 +31,18 @@ $('#groupsTable tbody').on('click', '.deleteBtn', function () {
     $("#deleteConfirmSpan").attr('data', data[0]);
     $("#deleteConfirmModal").modal('show');
 });
+
+var groups = [];
+
+websocket = new WatchdogWebsocket(6085, "/groups", {
+    onload: function (event) {
+        getGroups();
+    },
+    groupsList: function (event) {
+        groups = JSON.parse(event.data);
+    }
+});
+
+function getGroups(){
+    websocket.send("getGroups", "all");
+}
