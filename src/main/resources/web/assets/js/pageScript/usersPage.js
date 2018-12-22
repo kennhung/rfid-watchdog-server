@@ -22,7 +22,7 @@ var usersTable = $("#usersTable").DataTable({
             "render": function (data, type, row) {
                 return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
             },
-            "targets": 5
+            "targets": 8
         }
     ]
 });
@@ -38,6 +38,9 @@ $('#usersTable tbody').on('click', '.editBtn', function () {
     $("#editName").val(data[2]);
     $("#editGroups").val(data[3]);
     $("#editMeta").val(data[4]);
+    $("#editValidate").val(data[5]);
+    $("#editEnable").prop("checked", (data[6]?true:false));
+    $("#editPassword").val(data[7]);
     $("#editUserModal").modal('show');
 });
 
@@ -55,7 +58,7 @@ var renewUsersList = function (event) {
     console.log(userList);
     usersTable.clear();
     userList.forEach(function (data) {
-        usersTable.row.add([data.id, data.uid, data.name, data.groups, data.metadata]).draw();
+        usersTable.row.add([data.id, data.uid, data.name, data.groups, data.metadata, data.validate, data.enable, data.password]).draw();
     });
 }
 
@@ -89,7 +92,9 @@ $("#newUser").on('click', function () {
     $("#editName").val("");
     $("#editMeta").val(JSON.stringify({}));
     $("#editGroups").val(JSON.stringify([]));
-
+    $("#editValidate").val(Math.floor(Date.now() / 1000));
+    $("#editEnable").prop("checked", true);
+    $("#editPassword").val("");
     $("#editUserModal").modal('show');
 })
 
@@ -101,8 +106,8 @@ $("#editUserSave").on('click', function () {
         metadata: $("#editMeta").val(),
         groups: $("#editGroups").val(),
         validate: $("#editValidate").val(),
-        enable: true,
-        password: ""
+        enable: $("#editEnable").prop("checked"),
+        password: $("#editPassword").val()
     };
     websocket.send("saveUser", JSON.stringify(editUser));
     $("#editUserModal").modal('hide');
