@@ -66,4 +66,8 @@ public class DoorsHandler implements WebSocketHandler {
             ws.sendErr(e.getMessage());
         }
     }
+
+    public void getGroups(String data){
+        new GroupsHandler(ws).getGroups(data);
+    }
 }

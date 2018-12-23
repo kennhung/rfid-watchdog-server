@@ -68,6 +68,33 @@
                     <input type="text" class="form-control" id="editPermission_Blocks">
                 </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editDoorSave">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pbEditModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Door</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">Id: <span class="badge badge-info" id="pbEditId">N/A</span></div>
+
+                <fieldset disabled>
+                    <label for="editPermission_Blocks">permission blocks</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="pbJson">
+                    </div>
+                </fieldset>
 
                 <table id="editPermissionBlocksTable" class="table table-hover table-sm">
                     <thead>
@@ -87,10 +114,12 @@
                 <label for="pb_validate">validate</label>
                 <input type="text" class="form-control form-control-sm" id="pb_validate" disabled>
 
+                <button type="button" class="btn btn-primary mt-3" id="pbUpdate">OK</button>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="editDoorSave">Save</button>
+                <button type="button" class="btn btn-primary" id="editPbSave">Save</button>
             </div>
         </div>
     </div>

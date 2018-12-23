@@ -11,7 +11,7 @@ var doorsTable = $("#doorsTable").DataTable({
         },
         {
             "render": function (data, type, row) {
-                return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
+                return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-info btn-sm pbEditBtn">Permissions</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
             },
             "targets": 4
         }
@@ -28,12 +28,6 @@ $('#doorsTable tbody').on('click', '.editBtn', function () {
     $("#editName").val(data[1]);
     $("#editAuth_token").val(data[2]);
     $("#editPermission_Blocks").val(data[3]);
-    editPermissionBlocksTable.clear();
-    var pbs = JSON.parse(data[3]);
-    console.log(pbs);
-    pbs.forEach(function (p) {
-        editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
-    });
     $("#editDoorModal").modal('show');
 });
 
@@ -59,12 +53,18 @@ function getDoors(){
     websocket.send("getDoors", "all");
 }
 
+var groupsList;
+
 websocket = new WatchdogWebsocket(6085, "/doors", {
     onload: function (event) {
         getDoors();
+        websocket.send("getGroups", "all");
     },
     doorsList: function (event) {
         renewDoorsList(event);
+    },
+    groupsList: function (event) {
+        groupsList = event.data;
     }
 });
 
@@ -114,18 +114,38 @@ var editPermissionBlocksTable = $("#editPermissionBlocksTable").DataTable({
 
 $("#editPermissionBlocksTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newPermissionBlock\" class=\"btn btn-outline-primary btn-sm editBtn\">New PermissionBlock</button>")
 
+$('#doorsTable tbody').on('click', '.pbEditBtn', function () {
+    var parent = $(this).parent().parent();
+    var data = doorsTable.row(parent).data();
+    console.log(data);
+
+    editPermissionBlocksTable.clear();
+    var pbs = JSON.parse(data[3]);
+    console.log(pbs);
+    pbs.forEach(function (p) {
+        editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
+    });
+    $("#pbJson").val(data[3]);
+
+    $("#pbEditModal").modal('show');
+});
+
+var pbSelectRow = null;
+
 $('#editPermissionBlocksTable tbody').on('click','tr', function () {
     if ( $(this).hasClass('table-info') ) {
         $(this).removeClass('table-info');
 
         $("#pb_targetId").attr("disabled", true).val("");
         $("#pb_validate").attr("disabled", true).val("");
+        pbSelectRow = null;
     }
     else {
         editPermissionBlocksTable.$('tr.table-info').removeClass('table-info');
         $(this).addClass('table-info');
 
-        var data = editPermissionBlocksTable.row(this).data();
+        pbSelectRow = editPermissionBlocksTable.row(this)
+        var data = pbSelectRow.data();
         console.log(data);
 
         $("#pb_targetId").removeAttr("disabled").val(data[0]);
