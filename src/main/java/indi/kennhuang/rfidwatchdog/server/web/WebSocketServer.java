@@ -3,10 +3,7 @@ package indi.kennhuang.rfidwatchdog.server.web;
 import fi.iki.elonen.NanoWSD;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
-import indi.kennhuang.rfidwatchdog.server.web.ws.handler.EmptyHandler;
-import indi.kennhuang.rfidwatchdog.server.web.ws.handler.GroupsHandler;
-import indi.kennhuang.rfidwatchdog.server.web.ws.handler.UsersHandler;
-import indi.kennhuang.rfidwatchdog.server.web.ws.handler.IndexHandler;
+import indi.kennhuang.rfidwatchdog.server.web.ws.handler.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,6 +44,9 @@ public class WebSocketServer extends NanoWSD {
             }
             else if(uri.equals("/groups")){
                 handler = new GroupsHandler(this);
+            }
+            else if(uri.equals("/doors")){
+                handler = new DoorsHandler(this);
             }
             else {
                 handler = new EmptyHandler();
@@ -101,7 +101,7 @@ public class WebSocketServer extends NanoWSD {
                 } catch (JSONException | IllegalAccessException | InvocationTargetException e) {
                     sendInternalError(e.getMessage());
                 } catch (NoSuchMethodException e) {
-                    sendInternalError("Can't fine method of " + msgType);
+                    sendInternalError("["+handler.getName()+"] Can't fine method of " + msgType);
                 }
             } catch (IOException IOE) {
                 IOE.printStackTrace();
