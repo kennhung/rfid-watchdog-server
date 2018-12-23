@@ -8,13 +8,13 @@ var usersTable = $("#usersTable").DataTable({
                 var out = "";
                 var jdata = JSON.parse(data);
                 for (var i = 0; i < jdata.length; i++) {
-                    var group = getGroupById(groups,jdata[i]);
-                    if(group != undefined){
+                    var group = getGroupById(groups, jdata[i]);
+                    if (group != undefined) {
                         out += group.name;
                         out += ", ";
                     }
                 }
-                return out.substr(0,out.length-2);
+                return out.substr(0, out.length - 2);
             },
             "targets": 3
         },
@@ -29,6 +29,14 @@ var usersTable = $("#usersTable").DataTable({
 
 $("#usersTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newUser\" class=\"btn btn-outline-dark btn-sm editBtn\">New User</button>")
 
+var fp = flatpickr(".dateTimeSelector", {
+    enableTime : true,
+    dateFormat : "U",
+    time_24hr : true,
+    plugins : [new confirmDatePlugin({ })],
+    static: false
+});
+
 $('#usersTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = usersTable.row(parent).data();
@@ -38,8 +46,8 @@ $('#usersTable tbody').on('click', '.editBtn', function () {
     $("#editName").val(data[2]);
     $("#editGroups").val(data[3]);
     $("#editMeta").val(data[4]);
-    $("#editValidate").val(data[5]);
-    $("#editEnable").prop("checked", (data[6]?true:false));
+    fp.setDate(data[5].toString());
+    $("#editEnable").prop("checked", (data[6] ? true : false));
     $("#editPassword").val(data[7]);
     $("#editUserModal").modal('show');
 });
@@ -82,7 +90,7 @@ function getUsers() {
     websocket.send("getUsers", "all");
 }
 
-function getGroups(){
+function getGroups() {
     websocket.send("getGroups", "all");
 }
 
