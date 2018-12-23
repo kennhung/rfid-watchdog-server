@@ -61,10 +61,32 @@
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="editAuth_token">
                 </div>
+
+                <div class="d-none">
                 <label for="editPermission_Blocks">permission blocks</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="editPermission_Blocks">
                 </div>
+                </div>
+
+                <table id="editPermissionBlocksTable" class="table table-hover table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">targetId</th>
+                        <th scope="col">validate</th>
+                        <th scope="col">permissions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <label for="pb_targetId">targetId</label>
+                <input type="text" class="form-control form-control-sm" id="pb_targetId" disabled>
+
+                <label for="pb_validate">validate</label>
+                <input type="text" class="form-control form-control-sm" id="pb_validate" disabled>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
