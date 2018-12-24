@@ -32,7 +32,6 @@ $('#groupsTable tbody').on('click', '.deleteBtn', function () {
 
 var renewGroupsList = function (event) {
     var groupsList = JSON.parse(event.data);
-    console.log(groupsList);
     groupsTable.clear();
     groupsList.forEach(function (data) {
         groupsTable.row.add([data.id, data.name]).draw();
@@ -43,7 +42,7 @@ function getGroups(){
     websocket.send("getGroups", "all");
 }
 
-websocket = new WatchdogWebsocket(6085, "/groups", {
+var websocket = new WatchdogWebsocket(6085, "/groups", {
     onload: function (event) {
         getGroups();
     },

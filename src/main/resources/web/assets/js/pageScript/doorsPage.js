@@ -23,7 +23,6 @@ $("#doorsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"ne
 $('#doorsTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
-    console.log(data);
     $("#editId").val(data[0]);
     $("#editName").val(data[1]);
     $("#editAuthToken").val(data[2]);
@@ -53,7 +52,7 @@ function getDoors() {
 
 var groupsList;
 
-websocket = new WatchdogWebsocket(6085, "/doors", {
+var websocket = new WatchdogWebsocket(6085, "/doors", {
     onload: function (event) {
         getDoors();
         websocket.send("getGroups", "all");
@@ -225,7 +224,7 @@ $("#editPbSave").on('click', function () {
 
     websocket.send("updatePermissionBlocks", JSON.stringify({
         target: parseInt($("#pbEditId").val()),
-        permission_blocks: pbRows
+        permissionBlocks: pbRows
     }));
     getDoors();
 
