@@ -118,12 +118,16 @@ $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
 
-    $("#pbEditId").val(data[0]);
-    $("#pbEditId").html(data[1]+"("+data[0]+")");
+    lockPBInput();
 
-    editPermissionBlocksTable.clear();
+    $("#pbEditId").val(data[0]);
+    $("#pbEditId").html(data[1] + "(" + data[0] + ")");
+
+    editPermissionBlocksTable.clear().draw();
     var pbs = JSON.parse(data[3]);
-    console.log(pbs);
+
+    console.log(data[3]);
+
     pbs.forEach(function (p) {
         editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
     });
@@ -136,30 +140,32 @@ function lockPBInput() {
     $("#pb_targetId").attr("disabled", true).val("");
     $("#pb_validate").attr("disabled", true).val("");
     $("#pbUpdate").attr("disabled", true);
+    $("#pbDeleteSelected").attr("disabled", true);
 }
 
 function unlockPBInput() {
     $("#pb_targetId").removeAttr("disabled");
     $("#pb_validate").removeAttr("disabled");
     $("#pbUpdate").removeAttr("disabled");
+    $("#pbDeleteSelected").removeAttr("disabled");
 }
 
 
 $('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
-    if ($(this).hasClass('table-info')) {
-        $(this).removeClass('table-info');
+    if (editPermissionBlocksTable.rows().data().length > 0) {
+        if ($(this).hasClass('table-info')) {
+            $(this).removeClass('table-info');
+            lockPBInput();
+        } else {
+            editPermissionBlocksTable.$('tr.table-info').removeClass('table-info');
+            $(this).addClass('table-info');
 
-        lockPBInput();
-    } else {
-        editPermissionBlocksTable.$('tr.table-info').removeClass('table-info');
-        $(this).addClass('table-info');
+            var data = editPermissionBlocksTable.row(this).data();
 
-        var data = editPermissionBlocksTable.row(this).data();
-        console.log(data);
-
-        unlockPBInput();
-        $("#pb_targetId").val(data[0]);
-        pbDateTimePicker.setDate(data[1].toString());
+            unlockPBInput();
+            $("#pb_targetId").val(data[0]);
+            pbDateTimePicker.setDate(data[1].toString());
+        }
     }
 });
 
@@ -169,7 +175,7 @@ var pbDateTimePicker = flatpickr("#pb_validate", {
     time_24hr: true,
     plugins: [new confirmDatePlugin({})],
     static: false
-})
+});
 
 $("#newPermissionBlock").on('click', function () {
     $("#pb_targetId").removeAttr("disabled").val("");
@@ -179,14 +185,30 @@ $("#newPermissionBlock").on('click', function () {
 });
 
 $("#pbUpdate").on('click', function () {
-    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes($("#pb_targetId").val(), 0);
+    var targetId = $("#pb_targetId").val();
+
+    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes(targetId, 0);
     if (pbRow.length <= 0) {
-        editPermissionBlocksTable.row.add([$("#pb_targetId").val(), $("#pb_validate").val(), JSON.stringify([])]).draw();
+        editPermissionBlocksTable.row.add([targetId, $("#pb_validate").val(), JSON.stringify({
+            open: false,
+            admin: false
+        })]).draw();
     } else {
-        editPermissionBlocksTable.row(pbRow).data([$("#pb_targetId").val(), $("#pb_validate").val(), editPermissionBlocksTable.row(pbRow).data()[2]]).draw();
+        editPermissionBlocksTable.row(pbRow).data([targetId, $("#pb_validate").val(), editPermissionBlocksTable.row(pbRow).data()[2]]).draw();
     }
     lockPBInput();
     $("#editPermissionBlocksTable tbody tr").removeClass('table-info');
+});
+
+$("#pbDeleteSelected").on('click', function () {
+    var targetId = $("#pb_targetId").val();
+
+    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes(targetId, 0);
+    if (pbRow.length > 0) {
+        editPermissionBlocksTable.row(pbRow).remove();
+    }
+    lockPBInput();
+    editPermissionBlocksTable.draw();
 });
 
 $("#editPbSave").on('click', function () {
@@ -205,7 +227,10 @@ $("#editPbSave").on('click', function () {
         pbRows.push(pb);
     });
 
-    websocket.send("updatePermissionBlocks", JSON.stringify({target: $("#pbEditId").val(), permission_blocks: pbRows}));
+    websocket.send("updatePermissionBlocks", JSON.stringify({
+        target: parseInt($("#pbEditId").val()),
+        permission_blocks: pbRows
+    }));
     getDoors();
 
     $("#pbEditModal").modal('hide');
