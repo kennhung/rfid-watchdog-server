@@ -109,7 +109,14 @@
                 </table>
 
                 <label for="pb_targetId">targetId</label>
-                <input type="text" class="form-control form-control-sm" id="pb_targetId" disabled>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="pbGroupsDrop">Groups...</button>
+                        <div class="dropdown-menu" id="pbGroupsSelect">
+                        </div>
+                    </div>
+                    <input type="text" class="form-control form-control-sm" id="pb_targetId" disabled>
+                </div>
 
                 <label for="pb_validate">validate</label>
                 <input type="text" class="form-control form-control-sm" id="pb_validate" disabled>
@@ -168,6 +175,11 @@
 
 <script src="assets/js/pageScript/doorsPage.js"></script>
 
+<script>
+    function putPbTargetId(id){
+        $("#pb_targetId").val(id);
+    }
+</script>
 
 </body>
 </html>

@@ -23,7 +23,7 @@ $("#doorsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"ne
 $('#doorsTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
-    console.log(data);
+
     $("#editId").val(data[0]);
     $("#editName").val(data[1]);
     $("#editAuth_token").val(data[2]);
@@ -34,7 +34,7 @@ $('#doorsTable tbody').on('click', '.editBtn', function () {
 $('#doorsTable tbody').on('click', '.deleteBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
-    console.log(data);
+
     $("#deleteConfirmSpan").html(data[1]);
     $("#deleteConfirmSpan").attr('data', data[0]);
     $("#deleteConfirmModal").modal('show');
@@ -42,7 +42,7 @@ $('#doorsTable tbody').on('click', '.deleteBtn', function () {
 
 var renewDoorsList = function (event) {
     var doorsList = JSON.parse(event.data);
-    console.log(doorsList);
+
     doorsTable.clear();
     doorsList.forEach(function (data) {
         doorsTable.row.add([data.id, data.name, data.auth_token, JSON.stringify(data.permission_blocks)]).draw();
@@ -53,7 +53,12 @@ function getDoors() {
     websocket.send("getDoors", "all");
 }
 
-var groupsList;
+function renewPBGroups(data){
+    var pbGroupsSelect = $("#pbGroupsSelect");
+    data.forEach(function (d) {
+        pbGroupsSelect.append('<a class="dropdown-item" onclick="putPbTargetId('+d.id+')">'+d.name+'</a>');
+    });
+}
 
 websocket = new WatchdogWebsocket(6085, "/doors", {
     onload: function (event) {
@@ -64,7 +69,7 @@ websocket = new WatchdogWebsocket(6085, "/doors", {
         renewDoorsList(event);
     },
     groupsList: function (event) {
-        groupsList = event.data;
+        renewPBGroups(JSON.parse(event.data));
     }
 });
 
@@ -126,7 +131,6 @@ $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     editPermissionBlocksTable.clear().draw();
     var pbs = JSON.parse(data[3]);
 
-    console.log(data[3]);
 
     pbs.forEach(function (p) {
         editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
@@ -141,6 +145,7 @@ function lockPBInput() {
     $("#pb_validate").attr("disabled", true).val("");
     $("#pbUpdate").attr("disabled", true);
     $("#pbDeleteSelected").attr("disabled", true);
+    $("#pbGroupsDrop").attr("disabled", true);
 }
 
 function unlockPBInput() {
@@ -148,6 +153,7 @@ function unlockPBInput() {
     $("#pb_validate").removeAttr("disabled");
     $("#pbUpdate").removeAttr("disabled");
     $("#pbDeleteSelected").removeAttr("disabled");
+    $("#pbGroupsDrop").removeAttr("disabled");
 }
 
 
