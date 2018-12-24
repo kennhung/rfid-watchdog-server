@@ -38,11 +38,13 @@ var renewGroupsList = function (event) {
     });
 };
 
+var websocket;
+
 function getGroups(){
     websocket.send("getGroups", "all");
 }
 
-var websocket = new WatchdogWebsocket(6085, "/groups", {
+websocket = new WatchdogWebsocket(6085, "/groups", {
     onload: function (event) {
         getGroups();
     },

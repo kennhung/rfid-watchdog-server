@@ -46,13 +46,15 @@ var renewDoorsList = function (event) {
     });
 };
 
+var websocket;
+
 function getDoors() {
     websocket.send("getDoors", "all");
 }
 
 var groupsList;
 
-var websocket = new WatchdogWebsocket(6085, "/doors", {
+websocket = new WatchdogWebsocket(6085, "/doors", {
     onload: function (event) {
         getDoors();
         websocket.send("getGroups", "all");
