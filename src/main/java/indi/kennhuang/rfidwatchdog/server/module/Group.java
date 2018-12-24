@@ -1,8 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
-import indi.kennhuang.rfidwatchdog.server.module.permission.PermissionBlock;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.ResultSet;

@@ -1,6 +1,5 @@
 package indi.kennhuang.rfidwatchdog.server.web.ws.handler;
 
-import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
 import indi.kennhuang.rfidwatchdog.server.module.Group;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
@@ -14,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GroupsHandler implements WebSocketHandler {
-    WebSocketServer.WatchdogWebSocket ws;
+    private WebSocketServer.WatchdogWebSocket ws;
 
     public GroupsHandler(WebSocketServer.WatchdogWebSocket watchdogWebSocket) {
         ws = watchdogWebSocket;

@@ -1,10 +1,8 @@
 package indi.kennhuang.rfidwatchdog.server.web.ws.handler;
 
-import indi.kennhuang.rfidwatchdog.server.module.Group;
 import indi.kennhuang.rfidwatchdog.server.module.User;
 import indi.kennhuang.rfidwatchdog.server.protocal.websocket.WebSocketHandler;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
-import netscape.javascript.JSException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

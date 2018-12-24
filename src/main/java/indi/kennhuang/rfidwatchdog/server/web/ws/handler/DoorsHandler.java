@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DoorsHandler implements WebSocketHandler {
-    WebSocketServer.WatchdogWebSocket ws;
+    private WebSocketServer.WatchdogWebSocket ws;
 
     public  DoorsHandler(WebSocketServer.WatchdogWebSocket ws){
         this.ws = ws;
