@@ -223,7 +223,7 @@ $("#editPbSave").on('click', function () {
     });
 
     websocket.send("updatePermissionBlocks", JSON.stringify({
-        target: parseInt($("#pbEditId").val()),
+        target: parseInt($("#pbEditId").val(),10),
         permissionBlocks: pbRows
     }));
     getDoors();
