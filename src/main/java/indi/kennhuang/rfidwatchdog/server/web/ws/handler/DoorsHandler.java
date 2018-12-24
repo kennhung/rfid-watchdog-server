@@ -67,6 +67,24 @@ public class DoorsHandler implements WebSocketHandler {
         }
     }
 
+    public void updatePermissionBlocks(String data){
+        JSONObject in = new JSONObject(data);
+        int targetDoorId = in.getInt("target");
+
+        try {
+            Door d = Door.findDoorById(targetDoorId);
+            if(d == null){
+                ws.sendErr("Door id "+targetDoorId+" not found.");
+                return;
+            }
+            d.permissionBlocks = Door.encodePermissionBlocks(in.getJSONArray("permission_blocks"));
+
+            Door.saveDoor(d);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void getGroups(String data){
         new GroupsHandler(ws).getGroups(data);
     }
