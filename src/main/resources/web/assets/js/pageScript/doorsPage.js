@@ -4,13 +4,13 @@ var doorsTable = $("#doorsTable").DataTable({
     "info": true,
     "columnDefs": [
         {
-            "render": function (data, type, row) {
-               return JSON.parse(data).length;
+            "render": function (data) {
+                return JSON.parse(data).length;
             },
             "targets": 3
         },
         {
-            "render": function (data, type, row) {
+            "render": function () {
                 return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-info btn-sm pbEditBtn">Permissions</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
             },
             "targets": 4
@@ -18,7 +18,7 @@ var doorsTable = $("#doorsTable").DataTable({
     ]
 });
 
-$("#doorsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newDoor\" class=\"btn btn-outline-dark btn-sm editBtn\">New Door</button>")
+$("#doorsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newDoor\" class=\"btn btn-outline-dark btn-sm editBtn\">New Door</button>");
 
 $('#doorsTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
@@ -49,7 +49,7 @@ var renewDoorsList = function (event) {
     });
 };
 
-function getDoors(){
+function getDoors() {
     websocket.send("getDoors", "all");
 }
 
@@ -101,7 +101,7 @@ $("#deleteConfirm").on('click', function () {
 var editPermissionBlocksTable = $("#editPermissionBlocksTable").DataTable({
     "paging": false,
     "searching": false,
-    "bInfo" : false,
+    "bInfo": false,
     "columnDefs": [
         {
             "render": function (data, type, row) {
@@ -112,7 +112,7 @@ var editPermissionBlocksTable = $("#editPermissionBlocksTable").DataTable({
     ]
 });
 
-$("#editPermissionBlocksTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newPermissionBlock\" class=\"btn btn-outline-primary btn-sm editBtn\">New PermissionBlock</button>")
+$("#editPermissionBlocksTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newPermissionBlock\" class=\"btn btn-outline-primary btn-sm editBtn\">New PermissionBlock</button>");
 
 $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     var parent = $(this).parent().parent();
@@ -130,30 +130,40 @@ $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     $("#pbEditModal").modal('show');
 });
 
-var pbSelectRow = null;
-
-$('#editPermissionBlocksTable tbody').on('click','tr', function () {
-    if ( $(this).hasClass('table-info') ) {
+$('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
+    if ($(this).hasClass('table-info')) {
         $(this).removeClass('table-info');
 
         $("#pb_targetId").attr("disabled", true).val("");
         $("#pb_validate").attr("disabled", true).val("");
+        $("#pbUpdate").attr("disabled", true);
         pbSelectRow = null;
-    }
-    else {
+    } else {
         editPermissionBlocksTable.$('tr.table-info').removeClass('table-info');
         $(this).addClass('table-info');
 
-        pbSelectRow = editPermissionBlocksTable.row(this)
+        pbSelectRow = editPermissionBlocksTable.row(this);
         var data = pbSelectRow.data();
         console.log(data);
 
         $("#pb_targetId").removeAttr("disabled").val(data[0]);
         $("#pb_validate").removeAttr("disabled").val(data[1]);
+        $("#pbUpdate").removeAttr("disabled");
     }
 });
 
 $("#newPermissionBlock").on('click', function () {
     $("#pb_targetId").removeAttr("disabled").val("");
     $("#pb_validate").removeAttr("disabled").val("");
+    $("#pbUpdate").removeAttr("disabled");
+});
+
+$("#pbUpdate").on('click', function () {
+    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes($("#pb_targetId").val(),0);
+    if(pbRow.length <=0 ){
+        editPermissionBlocksTable.row.add([$("#pb_targetId").val(), $("#pb_validate").val(), JSON.stringify([])]).draw();
+    }
+    else{
+        pbSelectRow.data([$("#pb_targetId").val(), $("#pb_validate").val(), pbSelectRow.data()[2]]).draw();
+    }
 });
