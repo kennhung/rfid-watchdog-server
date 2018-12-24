@@ -12,12 +12,11 @@ var groupsTable = $("#groupsTable").DataTable({
     ]
 });
 
-$("#groupsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newGroup\" class=\"btn btn-outline-dark btn-sm editBtn\">New Group</button>")
+$("#groupsTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newGroup\" class=\"btn btn-outline-dark btn-sm editBtn\">New Group</button>");
 
 $('#groupsTable tbody').on('click', '.editBtn', function () {
     var parent = $(this).parent().parent();
     var data = groupsTable.row(parent).data();
-    console.log(data);
     $("#editId").val(data[0]);
     $("#editName").val(data[1]);
     $("#editGroupModal").modal('show');
@@ -26,7 +25,6 @@ $('#groupsTable tbody').on('click', '.editBtn', function () {
 $('#groupsTable tbody').on('click', '.deleteBtn', function () {
     var parent = $(this).parent().parent();
     var data = groupsTable.row(parent).data();
-    console.log(data);
     $("#deleteConfirmSpan").html(data[1]);
     $("#deleteConfirmSpan").attr('data', data[0]);
     $("#deleteConfirmModal").modal('show');
@@ -50,7 +48,7 @@ websocket = new WatchdogWebsocket(6085, "/groups", {
         getGroups();
     },
     groupsList: function (event) {
-        renewGroupsList(event)
+        renewGroupsList(event);
     }
 });
 

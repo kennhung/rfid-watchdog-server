@@ -4,13 +4,13 @@ var doorsTable = $("#doorsTable").DataTable({
     "info": true,
     "columnDefs": [
         {
-            "render": function (data) {
+            "render": function(data) {
                 return JSON.parse(data).length;
             },
             "targets": 3
         },
         {
-            "render": function () {
+            "render": function() {
                 return '<button type="button" class="btn btn-warning btn-sm editBtn">Edit</button> <button type="button" class="btn btn-info btn-sm pbEditBtn">Permissions</button> <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>';
             },
             "targets": 4
@@ -26,15 +26,14 @@ $('#doorsTable tbody').on('click', '.editBtn', function () {
     console.log(data);
     $("#editId").val(data[0]);
     $("#editName").val(data[1]);
-    $("#editAuth_token").val(data[2]);
-    $("#editPermission_Blocks").val(data[3]);
+    $("#editAuthToken").val(data[2]);
+    $("#editPermissionBlocks").val(data[3]);
     $("#editDoorModal").modal('show');
 });
 
 $('#doorsTable tbody').on('click', '.deleteBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
-    console.log(data);
     $("#deleteConfirmSpan").html(data[1]);
     $("#deleteConfirmSpan").attr('data', data[0]);
     $("#deleteConfirmModal").modal('show');
@@ -42,7 +41,6 @@ $('#doorsTable tbody').on('click', '.deleteBtn', function () {
 
 var renewDoorsList = function (event) {
     var doorsList = JSON.parse(event.data);
-    console.log(doorsList);
     doorsTable.clear();
     doorsList.forEach(function (data) {
         doorsTable.row.add([data.id, data.name, data.auth_token, JSON.stringify(data.permission_blocks)]).draw();
@@ -71,8 +69,8 @@ websocket = new WatchdogWebsocket(6085, "/doors", {
 $("#newDoor").on('click', function () {
     $("#editId").val(0);
     $("#editName").val("");
-    $("#editAuth_token").val("");
-    $("#editPermission_Blocks").val(JSON.stringify([]));
+    $("#editAuthToken").val("");
+    $("#editPermissionBlocks").val(JSON.stringify([]));
     $("#editDoorModal").modal('show');
 });
 
@@ -80,8 +78,8 @@ $("#editDoorSave").on('click', function () {
     var editDoor = {
         id: $("#editId").val(),
         name: $("#editName").val(),
-        auth_token: $("#editAuth_token").val(),
-        permission_blocks: JSON.parse($("#editPermission_Blocks").val())
+        auth_token: $("#editAuthToken").val(),
+        permission_blocks: JSON.parse($("#editPermissionBlocks").val())
     };
     websocket.send("saveDoor", JSON.stringify(editDoor));
     $("#editDoorModal").modal('hide');
@@ -114,28 +112,6 @@ var editPermissionBlocksTable = $("#editPermissionBlocksTable").DataTable({
 
 $("#editPermissionBlocksTable_wrapper .col-md-6:eq(0)").append("<button type=\"button\" id=\"newPermissionBlock\" class=\"btn btn-outline-primary btn-sm editBtn\">New PermissionBlock</button>");
 
-$('#doorsTable tbody').on('click', '.pbEditBtn', function () {
-    var parent = $(this).parent().parent();
-    var data = doorsTable.row(parent).data();
-
-    lockPBInput();
-
-    $("#pbEditId").val(data[0]);
-    $("#pbEditId").html(data[1] + "(" + data[0] + ")");
-
-    editPermissionBlocksTable.clear().draw();
-    var pbs = JSON.parse(data[3]);
-
-    console.log(data[3]);
-
-    pbs.forEach(function (p) {
-        editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
-    });
-    $("#pbJson").val(data[3]);
-
-    $("#pbEditModal").modal('show');
-});
-
 function lockPBInput() {
     $("#pb_targetId").attr("disabled", true).val("");
     $("#pb_validate").attr("disabled", true).val("");
@@ -150,6 +126,34 @@ function unlockPBInput() {
     $("#pbDeleteSelected").removeAttr("disabled");
 }
 
+
+var pbDateTimePicker = flatpickr("#pb_validate", {
+    enableTime: true,
+    dateFormat: "U",
+    time_24hr: true,
+    plugins: [new confirmDatePlugin({})],
+    static: false
+});
+
+$('#doorsTable tbody').on('click', '.pbEditBtn', function () {
+    var parent = $(this).parent().parent();
+    var data = doorsTable.row(parent).data();
+
+    lockPBInput();
+
+    $("#pbEditId").val(data[0]);
+    $("#pbEditId").html(data[1] + "(" + data[0] + ")");
+
+    editPermissionBlocksTable.clear().draw();
+    var pbs = JSON.parse(data[3]);
+
+    pbs.forEach(function (p) {
+        editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
+    });
+    $("#pbJson").val(data[3]);
+
+    $("#pbEditModal").modal('show');
+});
 
 $('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
     if (editPermissionBlocksTable.rows().data().length > 0) {
@@ -167,14 +171,6 @@ $('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
             pbDateTimePicker.setDate(data[1].toString());
         }
     }
-});
-
-var pbDateTimePicker = flatpickr("#pb_validate", {
-    enableTime: true,
-    dateFormat: "U",
-    time_24hr: true,
-    plugins: [new confirmDatePlugin({})],
-    static: false
 });
 
 $("#newPermissionBlock").on('click', function () {
