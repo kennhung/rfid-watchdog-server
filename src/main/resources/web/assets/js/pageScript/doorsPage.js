@@ -130,40 +130,58 @@ $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     $("#pbEditModal").modal('show');
 });
 
+function lockPBInput(){
+    $("#pb_targetId").attr("disabled", true).val("");
+    $("#pb_validate").attr("disabled", true).val("");
+    $("#pbUpdate").attr("disabled", true);
+}
+
+function unlockPBInput(){
+    $("#pb_targetId").removeAttr("disabled");
+    $("#pb_validate").removeAttr("disabled");
+    $("#pbUpdate").removeAttr("disabled");
+}
+
+
 $('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
     if ($(this).hasClass('table-info')) {
         $(this).removeClass('table-info');
 
-        $("#pb_targetId").attr("disabled", true).val("");
-        $("#pb_validate").attr("disabled", true).val("");
-        $("#pbUpdate").attr("disabled", true);
-        pbSelectRow = null;
+        lockPBInput();
     } else {
         editPermissionBlocksTable.$('tr.table-info').removeClass('table-info');
         $(this).addClass('table-info');
 
-        pbSelectRow = editPermissionBlocksTable.row(this);
-        var data = pbSelectRow.data();
+        var data = editPermissionBlocksTable.row(this).data();
         console.log(data);
 
-        $("#pb_targetId").removeAttr("disabled").val(data[0]);
-        $("#pb_validate").removeAttr("disabled").val(data[1]);
-        $("#pbUpdate").removeAttr("disabled");
+        unlockPBInput();
+        $("#pb_targetId").val(data[0]);
+        pbDateTimePicker.setDate(data[1].toString());
     }
 });
+
+var pbDateTimePicker = flatpickr("#pb_validate", {
+    enableTime: true,
+    dateFormat: "U",
+    time_24hr: true,
+    plugins: [new confirmDatePlugin({})],
+    static: false
+})
 
 $("#newPermissionBlock").on('click', function () {
     $("#pb_targetId").removeAttr("disabled").val("");
     $("#pb_validate").removeAttr("disabled").val("");
     $("#pbUpdate").removeAttr("disabled");
+    pbDateTimePicker.setDate();
 });
 
 $("#pbUpdate").on('click', function () {
-    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes($("#pb_targetId").val(),0);
-    if(pbRow.length <=0 ){
+    var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes($("#pb_targetId").val(), 0);
+    if (pbRow.length <= 0) {
         editPermissionBlocksTable.row.add([$("#pb_targetId").val(), $("#pb_validate").val(), JSON.stringify([])]).draw();
+    } else {
+        editPermissionBlocksTable.row(pbRow).data([$("#pb_targetId").val(), $("#pb_validate").val(), editPermissionBlocksTable.row(pbRow).data()[2]]).draw();
     }
-    else{
-        pbSelectRow.data([$("#pb_targetId").val(), $("#pb_validate").val(), pbSelectRow.data()[2]]).draw();
-    }
+    lockPBInput();
 });
