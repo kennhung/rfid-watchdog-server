@@ -5,13 +5,12 @@ import indi.kennhuang.rfidwatchdog.server.system.SystemInfo;
 import indi.kennhuang.rfidwatchdog.server.web.WebSocketServer;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
-public class indexHandler implements WebSocketHandler {
+public class IndexHandler implements WebSocketHandler {
 
     private WebSocketServer.WatchdogWebSocket ws;
 
-    public indexHandler(WebSocketServer.WatchdogWebSocket ws) {
+    public IndexHandler(WebSocketServer.WatchdogWebSocket ws) {
         this.ws = ws;
     }
 

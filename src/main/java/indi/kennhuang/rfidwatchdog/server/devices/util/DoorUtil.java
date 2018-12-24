@@ -1,32 +1,34 @@
 package indi.kennhuang.rfidwatchdog.server.devices.util;
 
-import indi.kennhuang.rfidwatchdog.server.module.DoorPermission;
-import indi.kennhuang.rfidwatchdog.server.module.Group;
+import indi.kennhuang.rfidwatchdog.server.module.Door;
 import indi.kennhuang.rfidwatchdog.server.module.User;
+import indi.kennhuang.rfidwatchdog.server.module.permission.PermissionBlock;
+import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class DoorUtil {
 
-    public static JSONObject check(JSONObject in) {
+    public static JSONObject check(JSONObject in, WatchDogLogger logger) {
         JSONObject reply = new JSONObject();
         try {
             User resUser = User.getUserByUid(in.getString("uid"));
+            Door door = Door.findDoorById(in.getInt("doorId"));
             if (resUser == null) {
                 reply.put("open", false);
                 reply.put("name", "Unknown");
-            } else {
-                if (checkDoorsAccessibility(resUser.doors, in.getInt("doorId"))) {
+            } else if(door == null){
+                reply.put("open", false);
+                reply.put("name", "Unknown Door");
+                logger.warning("Error while finding door with id="+in.getInt("doorId"));
+            }
+            else {
+                if (checkDoorAccessibility(resUser, door)){
                     reply.put("open", true);
                 } else {
-                    if (checkGroupDoorsAccessibility(new JSONArray(resUser.groups), in.getInt("doorId"))) {
-                        reply.put("open", true);
-                    } else {
-                        reply.put("open", false);
-                    }
+                    reply.put("open", false);
                 }
                 reply.put("name", resUser.name);
             }
@@ -36,37 +38,15 @@ public class DoorUtil {
         return reply;
     }
 
-
-    private static boolean checkGroupDoorsAccessibility(JSONArray groups, int doorId) {
-        for (int i = 0; i < groups.length(); i++) {
-            try {
-                Group group = Group.findGroupById(groups.getInt(i));
-                if (group == null) {
-                    continue;
-                }
-                if (checkDoorsAccessibility(group.doors, doorId)) {
-                    return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        //Access Denied
-        return false;
-    }
-
-
-    private static boolean checkDoorsAccessibility(List<DoorPermission> doorsList, int doorId) {
-        DoorPermission[] doors = new DoorPermission[doorsList.size()];
-        doors = doorsList.toArray(doors);
-        for (int i = 0; i < doors.length; i++) {
-            DoorPermission door = doors[i];
-            if (door.doorId == doorId && (door.validDate > System.currentTimeMillis() / 1000L) && door.open) {
-                //Access Granted
+    private static boolean checkDoorAccessibility(User user, Door door){
+        JSONArray groups = new JSONArray(user.groups);
+        for(int i=0;i<groups.length();i++){
+            PermissionBlock pb = door.permissionBlocks.get(groups.getInt(i));
+            if(pb.permission.open){
                 return true;
             }
         }
-        //Access Denied
         return false;
     }
+
 }

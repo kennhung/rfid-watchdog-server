@@ -3,7 +3,6 @@ package indi.kennhuang.rfidwatchdog.server.util.pipe;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Pipe;
-import java.nio.charset.Charset;
 
 public class WatchdogPipe {
     private Pipe pipe;

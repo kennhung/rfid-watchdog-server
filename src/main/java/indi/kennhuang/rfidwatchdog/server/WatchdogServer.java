@@ -26,7 +26,7 @@ public class WatchdogServer {
         WatchDogLogger.init(debugEnable);
         logger = new WatchDogLogger(LogType.Main);
         new Thread(deviceserver).start();
-        SQLite.openDatabase("jdbc:sqlite:foo.db");
+        SQLite.openDatabase("jdbc:sqlite:foo2.db");
 
         try {
             webapp = new WebApp(6084,debugEnable);

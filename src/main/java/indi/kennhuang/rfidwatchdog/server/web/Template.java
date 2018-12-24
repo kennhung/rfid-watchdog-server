@@ -11,7 +11,7 @@ import static fi.iki.elonen.NanoHTTPD.*;
 
 public class Template {
     public static Response getNotFoundResponse() {
-        NanoHTTPD.Response r = getTemplateFromFile(Response.Status.NOT_FOUND,"/web/errHtml/404.html");
+        Response r = getTemplateFromFile(Response.Status.NOT_FOUND,"/web/errHtml/404.html");
         if (r == null) {
             r = newFixedLengthResponse(NanoHTTPD.Response.Status.NOT_FOUND, MIME_PLAINTEXT, "Error 404, file not found.");
         }

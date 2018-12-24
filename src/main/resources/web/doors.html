@@ -20,17 +20,13 @@
 
         </div>
         <div class="col-lg-10">
-            <table id="usersTable" class="table table-striped">
+            <table id="doorsTable" class="table table-striped">
                 <thead>
                 <tr>
                     <th scope="col">id</th>
-                    <th scope="col">uid</th>
                     <th scope="col">name</th>
-                    <th scope="col">groups</th>
-                    <th scope="col">metadata</th>
-                    <th scope="col">validate</th>
-                    <th scope="col">enable</th>
-                    <th scope="col">password</th>
+                    <th scope="col">auth_token</th>
+                    <th scope="col">permissions</th>
                     <th scope="col">actions</th>
                 </tr>
                 </thead>
@@ -41,11 +37,11 @@
     </div>
 </div>
 
-<div class="modal fade" id="editUserModal" role="dialog">
+<div class="modal fade" id="editDoorModal" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
+                <h5 class="modal-title">Edit Door</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -57,38 +53,73 @@
                         <input type="text" class="form-control" id="editId">
                     </div>
                 </fieldset>
-                <label for="editUID">UID</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editUID">
-                </div>
                 <label for="editName">Name</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="editName">
                 </div>
-                <label for="editMeta">metadata</label>
+                <label for="editAuthToken">auth_token</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editMeta">
+                    <input type="text" class="form-control" id="editAuthToken">
                 </div>
-                <label for="editGroups">groups</label>
+
+                <div class="d-none">
+                <label for="editPermissionBlocks">permission blocks</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editGroups">
+                    <input type="text" class="form-control" id="editPermissionBlocks">
                 </div>
-                <label for="editValidate">validate</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control dateTimeSelector" id="editValidate">
-                </div>
-                <label for="editEnable">enable</label>
-                <div class="input-group mb-3">
-                    <input type="checkbox" class="form-control" id="editEnable">
-                </div>
-                <label for="editPassword">password</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editPassword">
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="editUserSave">Save</button>
+                <button type="button" class="btn btn-primary" id="editDoorSave">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pbEditModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Door</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-2">Id: <span class="badge badge-info" id="pbEditId">N/A</span></div>
+
+                <fieldset disabled>
+                    <label for="editPermissionBlocks">permission blocks</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="pbJson">
+                    </div>
+                </fieldset>
+
+                <table id="editPermissionBlocksTable" class="table table-hover table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">targetId</th>
+                        <th scope="col">validate</th>
+                        <th scope="col">permissions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <label for="pb_targetId">targetId</label>
+                <input type="text" class="form-control form-control-sm" id="pb_targetId" disabled>
+
+                <label for="pb_validate">validate</label>
+                <input type="text" class="form-control form-control-sm" id="pb_validate" disabled>
+
+                <button type="button" class="btn btn-primary mt-3" id="pbUpdate" disabled>OK</button>
+                <button type="button" class="btn btn-danger mt-3" id="pbDeleteSelected" disabled>Delete</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editPbSave">Save</button>
             </div>
         </div>
     </div>
@@ -98,13 +129,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm delete User</h5>
+                <h5 class="modal-title">Confirm delete door</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete user <span id="deleteConfirmSpan" class="badge badge-info"></span> ?</p>
+                <p>Are you sure you want to delete door <span id="deleteConfirmSpan" class="badge badge-info"></span> ?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -119,6 +150,7 @@
 <script src="assets/lib/datatables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="assets/lib/dataTables.buttons.min.js"></script>
+<script src="assets/js/fnFindCellRowIndexes.js"></script>
 <script src="assets/lib/buttons.bootstrap4.min.js"></script>
 <script src="assets/lib/bootstrap.min.js"></script>
 <script src="assets/lib/jquery.websocket-0.0.1.js"></script>
@@ -128,12 +160,12 @@
 
 <script>
     $("#navBarContainer").load("/navBar.html", function (value) {
-        $("#nav-users").addClass("active");
+        $("#nav-doors").addClass("active");
     });
 </script>
 <!-- Static above -->
 
-<script src="assets/js/pageScript/usersPage.js"></script>
+<script src="assets/js/pageScript/doorsPage.js"></script>
 
 
 </body>

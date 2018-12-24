@@ -1,13 +1,14 @@
 package indi.kennhuang.rfidwatchdog.server;
 
-import indi.kennhuang.rfidwatchdog.server.devices.TestDoorUtil;
-import indi.kennhuang.rfidwatchdog.server.devices.TestHardwareServer;
+
+import indi.kennhuang.rfidwatchdog.server.module.ModuleTestSuite;
 import indi.kennhuang.rfidwatchdog.server.module.TestUser;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(value = Suite.class)
-@Suite.SuiteClasses(value={TestHardwareServer.class, TestUser.class, TestDoorUtil.class})
+@Suite.SuiteClasses(value={ModuleTestSuite.class})
 public class TestSuite {
 
 }
