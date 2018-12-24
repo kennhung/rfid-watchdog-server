@@ -48,22 +48,7 @@ public class UsersHandler implements WebSocketHandler {
     }
 
     public void getGroups(String data) {
-        try {
-            List groups = Group.getAllGroups();
-            JSONArray groupsOut = new JSONArray();
-            if(groups != null) {
-                Iterator usersIterator = groups.iterator();
-                while (usersIterator.hasNext()) {
-                    Group group = (Group) usersIterator.next();
-                    groupsOut.put(Group.decodeGroup(group));
-                }
-            }
-            ws.send("groupsList",groupsOut.toString());
-        } catch (SQLException e) {
-            sendErr(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new GroupsHandler(ws).getGroups(data);
     }
 
     public void saveUser(String data) {

@@ -63,6 +63,17 @@ public class Group {
         SQLite.getConnection().commit();
     }
 
+    public static int deleteGroup(Group group) throws SQLException {
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM groups where id is " + group.id);
+        if (query.isClosed()) {
+            return 1;
+        } else {
+            SQLite.getStatement().execute("DELETE FROM groups WHERE id is " + group.id);
+        }
+        SQLite.getConnection().commit();
+        return 0;
+    }
+
     private static Group putResult(ResultSet query) throws SQLException {
         Group res = new Group();
         res.id = query.getInt("id");

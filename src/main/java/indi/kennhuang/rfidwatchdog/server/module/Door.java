@@ -8,10 +8,7 @@ import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Door {
     public int id;
@@ -24,6 +21,20 @@ public class Door {
         name = "";
         auth_token = "";
         permissionBlocks = new HashMap<Integer, PermissionBlock>();
+    }
+
+    public static List<Door> getAllDoors() throws SQLException {
+        List<Door> doorsOut = new ArrayList<Door>();
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM doors");
+        if (query.isClosed()) {
+            return null;
+        }
+
+        while (query.next()) {
+            doorsOut.add(putResult(query));
+        }
+
+        return doorsOut;
     }
 
     public static Door findDoorById(int id) throws SQLException {
@@ -69,6 +80,24 @@ public class Door {
         res.auth_token = query.getString("auth_token");
         res.permissionBlocks = encodePermissionBlocks(new JSONArray(query.getString("permission_blocks")));
         return res;
+    }
+
+    public static Door encodeDoor(JSONObject json){
+        Door d = new Door();
+        d.id = json.getInt("id");
+        d.permissionBlocks = encodePermissionBlocks(json.getJSONArray("permission_blocks"));
+        d.name = json.getString("name");
+        d.auth_token = json.getString("auth_token");
+        return d;
+    }
+
+    public static JSONObject decodeDoor(Door d){
+        JSONObject out = new JSONObject();
+        out.put("id",d.id);
+        out.put("name",d.name);
+        out.put("auth_token",d.auth_token);
+        out.put("permission_blocks", decodePermissionBlocks(d.permissionBlocks));
+        return out;
     }
 
     public static Map<Integer, PermissionBlock> encodePermissionBlocks(JSONArray json){
