@@ -10,9 +10,9 @@ import indi.kennhuang.rfidwatchdog.server.web.WebApp;
 import java.io.IOException;
 
 public class WatchdogServer {
-    private static DeviceServer deviceserver = new DeviceServer();
+    public static DeviceServer deviceserver = new DeviceServer();
     private static WatchDogLogger logger;
-    private static WebApp webapp;
+    public static WebApp webapp;
 
     public static void main(String Args[]){
 

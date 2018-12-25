@@ -1,5 +1,7 @@
 package indi.kennhuang.rfidwatchdog.server.system;
 
+import indi.kennhuang.rfidwatchdog.server.WatchdogServer;
+import indi.kennhuang.rfidwatchdog.server.devices.DeviceServer;
 import org.json.JSONObject;
 
 import java.net.SocketException;
@@ -31,6 +33,7 @@ public class SystemInfo {
         infoOut.put("uptime", getSystemUptimeInSec());
         infoOut.put("sysVersion", systemVersion);
         infoOut.put("network", NetworkInterfaceInfo.getNetworkInterfaceInfo(true,false,false).toString());
+        infoOut.put("hardwareClients", WatchdogServer.deviceserver.getConnectionsCount());
         infoOut.put("temp", 0);
         return infoOut;
     }

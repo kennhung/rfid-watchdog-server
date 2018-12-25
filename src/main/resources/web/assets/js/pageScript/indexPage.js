@@ -10,6 +10,7 @@ var UpdateBasicInfo = function (event) {
     if(min != 0) uptimeStr += min+" min ";
     uptimeStr += Math.floor(data.uptime%60)+" sec";
     $("#uptime").html(uptimeStr);
+    $("#hardwareClients").html(data.hardwareClients);
     console.log(JSON.parse(data.network));
     resolveNetworkInfo(JSON.parse(data.network));
     var sysTemp = data.temp;
