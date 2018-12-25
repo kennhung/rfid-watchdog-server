@@ -38,8 +38,9 @@ public class SQLite {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS doors " +
                     "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `auth_token` TEXT, `permission_blocks` TEXT)");
             /// Doors
-            statement.executeUpdate(Setting.getNewTableString());
-            // Settings
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS settings " +
+                    "(`name` TEXT PRIMARY KEY UNIQUE , `val` TEXT)");
+            // Config
             connection.commit();
         } catch (SQLException e) {
             System.err.println(e.getMessage());

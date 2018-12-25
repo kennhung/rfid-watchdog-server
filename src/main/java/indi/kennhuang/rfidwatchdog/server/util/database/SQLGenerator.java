@@ -12,10 +12,4 @@ public class SQLGenerator {
         return out;
     }
 
-    public static String getInsertString(String target, String fields, String values) {
-        String out = "insert into " + target;
-        out += " (" + fields + " ) ( " + values + " )";
-        return out;
-    }
-
 }

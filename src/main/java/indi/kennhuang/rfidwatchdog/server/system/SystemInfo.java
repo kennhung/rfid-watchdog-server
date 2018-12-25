@@ -3,6 +3,7 @@ package indi.kennhuang.rfidwatchdog.server.system;
 import org.json.JSONObject;
 
 import java.net.SocketException;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -15,6 +16,11 @@ public class SystemInfo {
     public static void serverStart() {
         if (!started) {
             startupTime = Instant.now();
+            try {
+                Config.loadConfig();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 //            TemperatureInfo.start();
         }
     }
