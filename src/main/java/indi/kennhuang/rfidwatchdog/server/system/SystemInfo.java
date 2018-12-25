@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class SystemInfo {
-    public static final String systemVersion = "1.0 SNAPSHOT";
+    public static final String systemVersion = "1.0 beta-1";
     private static boolean started = false;
 
     private static Instant startupTime;
