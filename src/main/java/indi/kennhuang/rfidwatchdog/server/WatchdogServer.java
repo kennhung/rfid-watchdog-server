@@ -10,26 +10,36 @@ import indi.kennhuang.rfidwatchdog.server.web.WebApp;
 import java.io.IOException;
 
 public class WatchdogServer {
-    public static DeviceServer deviceserver = new DeviceServer();
+    public static DeviceServer deviceserver;
     private static WatchDogLogger logger;
     public static WebApp webapp;
 
     public static void main(String Args[]){
+        int webPort = 6084;
+        int hwPort = 6083;
 
         boolean debugEnable = false;
         for(String arg :Args){
             if("-debug".equals(arg)){
                 debugEnable = true;
             }
+            else if(arg.contains("-webPort")){
+                webPort = Integer.parseInt(arg.split("=")[1]);
+            }
+            else if(arg.contains("-hwPort")){
+                hwPort = Integer.parseInt(arg.split("=")[1]);
+            }
         }
 
         WatchDogLogger.init(debugEnable);
         logger = new WatchDogLogger(LogType.Main);
+
+        deviceserver = new DeviceServer(hwPort);
         new Thread(deviceserver).start();
         SQLite.openDatabase("jdbc:sqlite:foo2.db");
 
         try {
-            webapp = new WebApp(6084,debugEnable);
+            webapp = new WebApp(webPort,debugEnable);
         } catch (IOException ioe) {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }
