@@ -20,6 +20,7 @@ public class DeviceServer  implements Runnable {
     private static boolean shutdown = false;
     private ExecutorService threadExecutor;
     private List<Future> futures = new ArrayList<>();
+    private Object lockFutures = new Object();
 
     public DeviceServer(){
         serverPort = 6083;
@@ -38,6 +39,10 @@ public class DeviceServer  implements Runnable {
 
         new Thread(() -> {
             while(true){
+                List<Future> futures;
+                synchronized (lockFutures){
+                    futures = this.futures;
+                }
                 for(Future future:futures){
                     try {
                         if(future.get() == null){
@@ -60,7 +65,9 @@ public class DeviceServer  implements Runnable {
             server = new ServerSocket(serverPort);
             while (!shutdown) {
                 Socket socket = server.accept();
-                futures.add(threadExecutor.submit(new DeviceHandler(socket)));
+                synchronized (lockFutures){
+                    futures.add(threadExecutor.submit(new DeviceHandler(socket)));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,6 +100,8 @@ public class DeviceServer  implements Runnable {
     }
 
     public int getConnectionsCount(){
-        return futures.size();
+        synchronized (lockFutures){
+            return futures.size();
+        }
     }
 }
