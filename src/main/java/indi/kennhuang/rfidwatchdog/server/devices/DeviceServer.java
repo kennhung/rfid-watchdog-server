@@ -14,13 +14,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class DeviceServer  implements Runnable {
-    public static int serverPort;
+    private static int serverPort;
 
     private static ServerSocket server = null;
     private static boolean shutdown = false;
     private ExecutorService threadExecutor;
     private List<Future> futures = new ArrayList<>();
-    private Object lockFutures = new Object();
+    private final Object lockFutures = new Object();
 
     public DeviceServer(){
         serverPort = 6083;
