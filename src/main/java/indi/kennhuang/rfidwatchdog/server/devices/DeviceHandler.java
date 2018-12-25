@@ -112,7 +112,7 @@ public class DeviceHandler implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println(clientSocket.getRemoteSocketAddress() + " disconnected");
+            logger.info(clientSocket.getRemoteSocketAddress() + " disconnected");
         }
     }
 
