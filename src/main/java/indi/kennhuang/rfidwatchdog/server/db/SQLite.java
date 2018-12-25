@@ -1,5 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.db;
 
+import indi.kennhuang.rfidwatchdog.server.module.Setting;
 import indi.kennhuang.rfidwatchdog.server.util.logging.LogType;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
 
@@ -37,6 +38,8 @@ public class SQLite {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS doors " +
                     "( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `auth_token` TEXT, `permission_blocks` TEXT)");
             /// Doors
+            statement.executeUpdate(Setting.getNewTableString());
+            // Settings
             connection.commit();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
