@@ -1,7 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.devices.util;
 
 import indi.kennhuang.rfidwatchdog.server.module.Door;
-import indi.kennhuang.rfidwatchdog.server.module.Group;
 import indi.kennhuang.rfidwatchdog.server.module.User;
 import indi.kennhuang.rfidwatchdog.server.module.permission.PermissionBlock;
 import indi.kennhuang.rfidwatchdog.server.util.logging.WatchDogLogger;
@@ -9,8 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
 
 public class DoorUtil {
 

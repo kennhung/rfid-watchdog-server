@@ -73,7 +73,7 @@ var renewUsersList = function (event) {
 var groups = [];
 
 
-websocket = new WatchdogWebsocket(6085, "/users", {
+var websocket = new WatchdogWebsocket(6085, "/users", {
     onload: function (event) {
         getGroups();
         getUsers();
