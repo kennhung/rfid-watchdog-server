@@ -6,6 +6,8 @@ import indi.kennhuang.rfidwatchdog.server.util.database.TableGenerator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Setting {
     public int id;
@@ -27,6 +29,32 @@ public class Setting {
             return null;
         }
         return putResult(query);
+    }
+
+    public static List<Setting> getAll() throws SQLException {
+        List<Setting> settingsOut = new ArrayList<Setting>();
+        ResultSet query = SQLite.getStatement().executeQuery(SQLGenerator.getSelectString("*","settings",null,null));
+
+        if(query.isClosed()){
+            return null;
+        }
+
+        while (query.next()) {
+            settingsOut.add(putResult(query));
+        }
+
+        return settingsOut;
+    }
+
+    public static void save(Setting setting) throws SQLException {
+        if(getFromId(setting.id) == null){
+            // new setting
+            SQLite.getStatement().execute("insert into settings (`name`, `value` ) values ('" + setting.name + "', '"+setting.value+"' )");
+        } else {
+            // old setting
+            SQLite.getStatement().execute("delete from settings where id is " + setting.id);
+            SQLite.getStatement().execute("insert into settings (`id`, `name`, `value` ) values (" + setting.id + ",'" + setting.name + "','" + setting.value + "')");
+        }
     }
 
     private static Setting putResult(ResultSet res) throws SQLException {
