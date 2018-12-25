@@ -35,8 +35,8 @@ public class WebSocketServer extends NanoWSD {
             this.logger = logger;
             uri = handshakeRequest.getUri();
             logger.debug("WS Connect '" + uri + "'");
-            //TODO serve
 
+            // Handlers
             if (uri.equals("/") || uri.equals("/index")) {
                 handler = new IndexHandler(this);
             }else if(uri.equals("/users")){

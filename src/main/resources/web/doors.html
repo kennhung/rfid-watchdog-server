@@ -9,7 +9,8 @@
     <link href="assets/css/main.css" rel="stylesheet">
     <link href="assets/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/confirmDate/confirmDate.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/flatpickr@latest/dist/plugins/confirmDate/confirmDate.css">
 </head>
 <body>
 <div id="navBarContainer"></div>
@@ -57,16 +58,16 @@
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="editName">
                 </div>
-                <label for="editAuth_token">auth_token</label>
+                <label for="editAuthToken">auth_token</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editAuth_token">
+                    <input type="text" class="form-control" id="editAuthToken">
                 </div>
 
                 <div class="d-none">
-                <label for="editPermission_Blocks">permission blocks</label>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="editPermission_Blocks">
-                </div>
+                    <label for="editPermissionBlocks">permission blocks</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="editPermissionBlocks">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -90,7 +91,7 @@
                 <div class="mb-2">Id: <span class="badge badge-info" id="pbEditId">N/A</span></div>
 
                 <fieldset disabled>
-                    <label for="editPermission_Blocks">permission blocks</label>
+                    <label for="editPermissionBlocks">permission blocks</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="pbJson">
                     </div>
@@ -121,6 +122,18 @@
                 <label for="pb_validate">validate</label>
                 <input type="text" class="form-control form-control-sm" id="pb_validate" disabled>
 
+
+                <div class="mt-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="adminCheckBox" value="admin">
+                        <label class="form-check-label" for="adminCheckBox">Admin</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="openCheckBox" value="open">
+                        <label class="form-check-label" for="openCheckBox">Open</label>
+                    </div>
+                </div>
+
                 <button type="button" class="btn btn-primary mt-3" id="pbUpdate" disabled>OK</button>
                 <button type="button" class="btn btn-danger mt-3" id="pbDeleteSelected" disabled>Delete</button>
             </div>
@@ -142,7 +155,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete door <span id="deleteConfirmSpan" class="badge badge-info"></span> ?</p>
+                <p>Are you sure you want to delete door <span id="deleteConfirmSpan" class="badge badge-info"></span> ?
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

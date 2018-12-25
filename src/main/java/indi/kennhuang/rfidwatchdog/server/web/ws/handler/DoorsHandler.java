@@ -77,11 +77,14 @@ public class DoorsHandler implements WebSocketHandler {
                 ws.sendErr("Door id "+targetDoorId+" not found.");
                 return;
             }
-            d.permissionBlocks = Door.encodePermissionBlocks(in.getJSONArray("permission_blocks"));
+            d.permissionBlocks = Door.encodePermissionBlocks(in.getJSONArray("permissionBlocks"));
 
             Door.saveDoor(d);
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (JSONException je){
+            System.out.println(data);
+            je.printStackTrace();
         }
     }
 

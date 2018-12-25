@@ -26,15 +26,14 @@ $('#doorsTable tbody').on('click', '.editBtn', function () {
 
     $("#editId").val(data[0]);
     $("#editName").val(data[1]);
-    $("#editAuth_token").val(data[2]);
-    $("#editPermission_Blocks").val(data[3]);
+    $("#editAuthToken").val(data[2]);
+    $("#editPermissionBlocks").val(data[3]);
     $("#editDoorModal").modal('show');
 });
 
 $('#doorsTable tbody').on('click', '.deleteBtn', function () {
     var parent = $(this).parent().parent();
     var data = doorsTable.row(parent).data();
-
     $("#deleteConfirmSpan").html(data[1]);
     $("#deleteConfirmSpan").attr('data', data[0]);
     $("#deleteConfirmModal").modal('show');
@@ -42,12 +41,13 @@ $('#doorsTable tbody').on('click', '.deleteBtn', function () {
 
 var renewDoorsList = function (event) {
     var doorsList = JSON.parse(event.data);
-
     doorsTable.clear();
     doorsList.forEach(function (data) {
         doorsTable.row.add([data.id, data.name, data.auth_token, JSON.stringify(data.permission_blocks)]).draw();
     });
 };
+
+var websocket;
 
 function getDoors() {
     websocket.send("getDoors", "all");
@@ -76,8 +76,8 @@ websocket = new WatchdogWebsocket(6085, "/doors", {
 $("#newDoor").on('click', function () {
     $("#editId").val(0);
     $("#editName").val("");
-    $("#editAuth_token").val("");
-    $("#editPermission_Blocks").val(JSON.stringify([]));
+    $("#editAuthToken").val("");
+    $("#editPermissionBlocks").val(JSON.stringify([]));
     $("#editDoorModal").modal('show');
 });
 
@@ -85,8 +85,8 @@ $("#editDoorSave").on('click', function () {
     var editDoor = {
         id: $("#editId").val(),
         name: $("#editName").val(),
-        auth_token: $("#editAuth_token").val(),
-        permission_blocks: JSON.parse($("#editPermission_Blocks").val())
+        auth_token: $("#editAuthToken").val(),
+        permission_blocks: JSON.parse($("#editPermissionBlocks").val())
     };
     websocket.send("saveDoor", JSON.stringify(editDoor));
     $("#editDoorModal").modal('hide');
@@ -131,7 +131,6 @@ $('#doorsTable tbody').on('click', '.pbEditBtn', function () {
     editPermissionBlocksTable.clear().draw();
     var pbs = JSON.parse(data[3]);
 
-
     pbs.forEach(function (p) {
         editPermissionBlocksTable.row.add([p.targetId, p.validate, JSON.stringify(p.permission)]).draw();
     });
@@ -154,6 +153,7 @@ function unlockPBInput() {
     $("#pbUpdate").removeAttr("disabled");
     $("#pbDeleteSelected").removeAttr("disabled");
     $("#pbGroupsDrop").removeAttr("disabled");
+    pbDateTimePicker.setDate();
 }
 
 
@@ -171,6 +171,21 @@ $('#editPermissionBlocksTable tbody').on('click', 'tr', function () {
             unlockPBInput();
             $("#pb_targetId").val(data[0]);
             pbDateTimePicker.setDate(data[1].toString());
+
+            var permissions = JSON.parse(data[2]);
+            if(permissions.open){
+                $("#openCheckBox").prop('checked',true);
+            }
+            else{
+                $("#openCheckBox").prop('checked',false);
+            }
+
+            if(permissions.admin){
+                $("#adminCheckBox").prop('checked',true);
+            }
+            else{
+                $("#adminCheckBox").prop('checked',false);
+            }
         }
     }
 });
@@ -184,10 +199,9 @@ var pbDateTimePicker = flatpickr("#pb_validate", {
 });
 
 $("#newPermissionBlock").on('click', function () {
-    $("#pb_targetId").removeAttr("disabled").val("");
-    $("#pb_validate").removeAttr("disabled").val("");
-    $("#pbUpdate").removeAttr("disabled");
-    pbDateTimePicker.setDate();
+    $("#pb_targetId").val("");
+    $("#pb_validate").val("");
+    unlockPBInput();
 });
 
 $("#pbUpdate").on('click', function () {
@@ -196,11 +210,14 @@ $("#pbUpdate").on('click', function () {
     var pbRow = $('#editPermissionBlocksTable').dataTable().fnFindCellRowIndexes(targetId, 0);
     if (pbRow.length <= 0) {
         editPermissionBlocksTable.row.add([targetId, $("#pb_validate").val(), JSON.stringify({
-            open: false,
-            admin: false
+            open: $("#openCheckBox").prop('checked'),
+            admin: $("#adminCheckBox").prop('checked')
         })]).draw();
     } else {
-        editPermissionBlocksTable.row(pbRow).data([targetId, $("#pb_validate").val(), editPermissionBlocksTable.row(pbRow).data()[2]]).draw();
+        editPermissionBlocksTable.row(pbRow).data([targetId, $("#pb_validate").val(), JSON.stringify({
+            open: $("#openCheckBox").prop('checked'),
+            admin: $("#adminCheckBox").prop('checked')
+        })]).draw();
     }
     lockPBInput();
     $("#editPermissionBlocksTable tbody tr").removeClass('table-info');
@@ -234,10 +251,10 @@ $("#editPbSave").on('click', function () {
     });
 
     websocket.send("updatePermissionBlocks", JSON.stringify({
-        target: parseInt($("#pbEditId").val()),
-        permission_blocks: pbRows
+        target: parseInt($("#pbEditId").val(), 10),
+        permissionBlocks: pbRows
     }));
     getDoors();
-
+    console.log(pbRows)
     $("#pbEditModal").modal('hide');
 });
