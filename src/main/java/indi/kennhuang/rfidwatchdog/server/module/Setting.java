@@ -1,7 +1,6 @@
 package indi.kennhuang.rfidwatchdog.server.module;
 
 import indi.kennhuang.rfidwatchdog.server.db.SQLite;
-import indi.kennhuang.rfidwatchdog.server.util.database.SQLGenerator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,28 +9,30 @@ import java.util.Map;
 
 public class Setting {
 
-    public static String loadSettingString(String name) throws SQLException {
-        ResultSet query = SQLite.getStatement().executeQuery(SQLGenerator.getSelectString("*","settings","name",name));
+    public static String loadSettingString(String settingName) throws SQLException {
+        ResultSet query = SQLite.getStatement().executeQuery("SELECT * FROM settings where name is '"+settingName+"'");
+
         if(query.isClosed()){
             return null;
         }
         return query.getString("val");
     }
 
-    public static void saveSettingString(String name, String config) throws SQLException {
+    public static String saveSettingString(String name, String config) throws SQLException {
         if(loadSettingString(name) == null){
-            SQLite.getStatement().execute("insert into settings (name, val) WITH ('"+name+"','"+config+"')");
+            SQLite.getStatement().execute("insert into settings (name, val) values ('"+name+"','"+config+"')");
         }
         else{
             SQLite.getStatement().execute("UPDATE settings SET val = '"+config+"' WHERE name = '"+name+"'");
         }
         SQLite.getConnection().commit();
+        return name;
     }
 
     public static Map<String,String> loadAllSettingsString() throws SQLException {
         Map<String,String> settings = new HashMap<>();
 
-        ResultSet query = SQLite.getStatement().executeQuery(SQLGenerator.getSelectString("*","settings",null,null));
+        ResultSet query = SQLite.getStatement().executeQuery("select * from settings");
         if(query.isClosed()){
             return null;
         }
