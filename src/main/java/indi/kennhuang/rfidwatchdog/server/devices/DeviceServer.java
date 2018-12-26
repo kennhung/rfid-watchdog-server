@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class DeviceServer  implements Runnable {
-    private static int serverPort;
+    static int serverPort;
 
     private static ServerSocket server = null;
     private static boolean shutdown = false;
