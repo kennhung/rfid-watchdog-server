@@ -6,7 +6,9 @@ public class TypesEnum {
         PING,
         CARD_CHECK,
         AUTH,
-        PONG
+        PONG,
+        OK,
+        UNAUTHORIZED
     }
 
     public static int decode(types type) {
@@ -21,6 +23,10 @@ public class TypesEnum {
                 return 4;
             case PONG:
                 return 5;
+            case OK:
+                return 6;
+            case UNAUTHORIZED:
+                return 7;
             default:
                 return 0;
         }
@@ -38,6 +44,10 @@ public class TypesEnum {
                 return types.AUTH;
             case 5:
                 return types.PONG;
+            case 6:
+                return types.OK;
+            case 7:
+                return types.UNAUTHORIZED;
             default:
                 return null;
         }

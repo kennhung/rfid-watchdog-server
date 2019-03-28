@@ -21,9 +21,9 @@ public class DeviceHandler implements Runnable {
     private Timer pingTimer;
     private DataOutputStream output = null;
 
-//    private String auth_token;
+    //    private String auth_token;
     private boolean auth;
-//    private int connDoor_id;
+    //    private int connDoor_id;
     private boolean looping = true;
 
     private WatchDogLogger logger;
@@ -35,6 +35,7 @@ public class DeviceHandler implements Runnable {
 
     @Override
     public void run() {
+        auth = false;
         Thread.currentThread().setName(clientSocket.getRemoteSocketAddress().toString());
         logger = new WatchDogLogger(LogType.HardwareServer);
         logger.info("Incoming connection from " + clientSocket.getRemoteSocketAddress());
@@ -43,7 +44,6 @@ public class DeviceHandler implements Runnable {
         try {
             input = new DataInputStream(this.clientSocket.getInputStream());
             output = new DataOutputStream(this.clientSocket.getOutputStream());
-            auth = true;//TODO remove after auth finish;
 
             pingTimer = new Timer();
             pingTimer.schedule(new PingTask(), pingPeriod * 1000);
@@ -65,12 +65,13 @@ public class DeviceHandler implements Runnable {
                         logger.debug(inputBuffer.toString());
                         HardwareMessage message = HardwareMessage.encodeMessage(inputBuffer.toString());
                         HardwareMessage reply = new HardwareMessage();
-                        if (auth || message.type == HardwareMessage.types.AUTH) {
+                        reply.content = new JSONObject();
+                        if (auth || message.type == HardwareMessage.types.AUTH || message.type == HardwareMessage.types.PONG) {
                             switch (message.type) {
                                 case CARD_CHECK:
                                     reply.type = TypesEnum.types.RESPONSE;
                                     JSONObject checkResult = DoorUtil.check(message.content, logger);
-                                    reply.content = new JSONObject().put("reply", checkResult.toString());
+                                    reply.content.put("reply", checkResult.toString());
                                     System.out.println(HardwareMessage.decodeMessage(reply));
                                     break;
                                 case PONG:
@@ -78,12 +79,20 @@ public class DeviceHandler implements Runnable {
                                     doReply = false;
                                     break;
                                 case AUTH:
-
+                                    if (DoorUtil.doorAuth(message.content)) {
+                                        reply.type = TypesEnum.types.OK;
+                                        auth = true;
+                                    } else {
+                                        reply.type = TypesEnum.types.UNAUTHORIZED;
+                                        logger.warning("Auth fail :" + message.content.toString() + " .");
+                                    }
                                     break;
                                 default:
-                                    System.out.println("Wrong type: " + message.type);
+                                    logger.warning("Wrong type: " + message.type);
                                     break;
                             }
+                        } else{
+                            reply.type = TypesEnum.types.UNAUTHORIZED;
                         }
 
                         if (doReply) {

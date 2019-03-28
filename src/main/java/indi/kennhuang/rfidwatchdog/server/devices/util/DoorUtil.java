@@ -19,13 +19,12 @@ public class DoorUtil {
             if (resUser == null) {
                 reply.put("open", false);
                 reply.put("name", "Unknown");
-            } else if(door == null){
+            } else if (door == null) {
                 reply.put("open", false);
                 reply.put("name", "Unknown Door");
-                logger.warning("Error while finding door with id="+in.getInt("doorId"));
-            }
-            else {
-                if (checkDoorAccessibility(resUser, door)){
+                logger.warning("Error while finding door with id=" + in.getInt("doorId"));
+            } else {
+                if (checkDoorAccessibility(resUser, door)) {
                     reply.put("open", true);
                 } else {
                     reply.put("open", false);
@@ -38,11 +37,26 @@ public class DoorUtil {
         return reply;
     }
 
-    private static boolean checkDoorAccessibility(User user, Door door){
+    public static boolean doorAuth(JSONObject in) {
+        try {
+            Door door = Door.findDoorById(in.getInt("id"));
+
+            if (door.auth_token.equals(in.getString("auth_token"))) {
+               return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+    private static boolean checkDoorAccessibility(User user, Door door) {
         JSONArray groups = new JSONArray(user.groups);
-        for(int i=0;i<groups.length();i++){
+        for (int i = 0; i < groups.length(); i++) {
             PermissionBlock pb = door.permissionBlocks.get(groups.getInt(i));
-            if(pb.permission.open){
+            if (pb.permission.open) {
                 return true;
             }
         }

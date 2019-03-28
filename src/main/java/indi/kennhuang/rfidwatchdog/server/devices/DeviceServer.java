@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class DeviceServer  implements Runnable {
+public class DeviceServer implements Runnable {
     static int serverPort;
 
     private static ServerSocket server = null;
@@ -22,11 +22,11 @@ public class DeviceServer  implements Runnable {
     private List<Future> futures = new ArrayList<>();
     private final Object lockFutures = new Object();
 
-    public DeviceServer(){
+    public DeviceServer() {
         serverPort = 6083;
     }
 
-    public DeviceServer(int port){
+    public DeviceServer(int port) {
         serverPort = port;
     }
 
@@ -38,18 +38,16 @@ public class DeviceServer  implements Runnable {
         WatchDogLogger logger = new WatchDogLogger(LogType.HardwareServer);
 
         new Thread(() -> {
-            while(true){
-                List<Future> futures;
-                synchronized (lockFutures){
-                    futures = this.futures;
-                }
-                for(Future future:futures){
-                    try {
-                        if(future.get() == null){
-                            futures.remove(future);
+            while (true) {
+                synchronized (lockFutures) {
+                    for (Future future : futures) {
+                        try {
+                            if (future.get() == null) {
+                                futures.remove(future);
+                            }
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
                         }
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
                     }
                 }
                 try {
@@ -61,11 +59,11 @@ public class DeviceServer  implements Runnable {
         }).start();
 
         try {
-            logger.info("device Server Starting on Port "+serverPort);
+            logger.info("device Server Starting on Port " + serverPort);
             server = new ServerSocket(serverPort);
             while (!shutdown) {
                 Socket socket = server.accept();
-                synchronized (lockFutures){
+                synchronized (lockFutures) {
                     futures.add(threadExecutor.submit(new DeviceHandler(socket)));
                 }
             }
@@ -83,24 +81,22 @@ public class DeviceServer  implements Runnable {
         }
     }
 
-    public int getStatus(){
-        if(threadExecutor == null){
+    public int getStatus() {
+        if (threadExecutor == null) {
             return 1;
-        }
-        else if(threadExecutor.isShutdown()){
+        } else if (threadExecutor.isShutdown()) {
             return 2;
-        } else if(threadExecutor.isTerminated()){
+        } else if (threadExecutor.isTerminated()) {
             return 3;
-        }
-        else if(threadExecutor.isTerminated()&&threadExecutor.isShutdown()){
+        } else if (threadExecutor.isTerminated() && threadExecutor.isShutdown()) {
             return 4;
         }
 
         return 0;
     }
 
-    public int getConnectionsCount(){
-        synchronized (lockFutures){
+    public int getConnectionsCount() {
+        synchronized (lockFutures) {
             return futures.size();
         }
     }
