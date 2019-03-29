@@ -39,10 +39,11 @@ public class DoorUtil {
 
     public static boolean doorAuth(JSONObject in) {
         try {
+            if (!in.has("id")) return false;
             Door door = Door.findDoorById(in.getInt("id"));
 
             if (door.auth_token.equals(in.getString("auth_token"))) {
-               return true;
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
