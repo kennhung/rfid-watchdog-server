@@ -31,7 +31,7 @@ public class WebApp extends NanoHTTPD {
         }
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         logger.info("Running! Point your browsers to http://localhost:" + port + "/");
-        ws = new WebSocketServer(6085,logger);
+        ws = new WebSocketServer(6085,logger, quiet);
         ws.start();
     }
 

@@ -18,7 +18,7 @@ public class WatchdogServer {
         int webPort = 6084;
         int hwPort = 6083;
 
-        boolean debugEnable = false;
+        boolean debugEnable = false, debugWeb = false;
         for(String arg :Args){
             if("-debug".equals(arg)){
                 debugEnable = true;
@@ -28,6 +28,8 @@ public class WatchdogServer {
             }
             else if(arg.contains("-hwPort")){
                 hwPort = Integer.parseInt(arg.split("=")[1]);
+            } else if(arg.contains("-debug-web")){
+                debugWeb = true;
             }
         }
 
@@ -39,7 +41,7 @@ public class WatchdogServer {
         SQLite.openDatabase("jdbc:sqlite:foo2.db");
 
         try {
-            webapp = new WebApp(webPort,debugEnable);
+            webapp = new WebApp(webPort,debugWeb);
         } catch (IOException ioe) {
             new WatchDogLogger(LogType.WebPage).severe("Couldn't start server:\n" + ioe);
         }

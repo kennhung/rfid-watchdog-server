@@ -14,41 +14,42 @@ import java.util.logging.Level;
 public class WebSocketServer extends NanoWSD {
 
     private WatchDogLogger logger;
+    private boolean quiet;
 
-    public WebSocketServer(int port, WatchDogLogger logger) {
+    public WebSocketServer(int port, WatchDogLogger logger, boolean quiet) {
         super(port);
         this.logger = logger;
+        this.quiet = quiet;
     }
 
     @Override
     protected WebSocket openWebSocket(IHTTPSession handshake) {
-        return new WatchdogWebSocket(handshake, logger);
+        return new WatchdogWebSocket(handshake, logger, quiet);
     }
 
     public static class WatchdogWebSocket extends WebSocket {
         private String uri;
         private WatchDogLogger logger;
         private WebSocketHandler handler;
+        private boolean quiet;
 
-        public WatchdogWebSocket(IHTTPSession handshakeRequest, WatchDogLogger logger) {
+        public WatchdogWebSocket(IHTTPSession handshakeRequest, WatchDogLogger logger, boolean quiet) {
             super(handshakeRequest);
             this.logger = logger;
+            this.quiet = quiet;
             uri = handshakeRequest.getUri();
             logger.debug("WS Connect '" + uri + "'");
 
             // Handlers
             if (uri.equals("/") || uri.equals("/index")) {
                 handler = new IndexHandler(this);
-            }else if(uri.equals("/users")){
+            } else if (uri.equals("/users")) {
                 handler = new UsersHandler(this);
-            }
-            else if(uri.equals("/groups")){
+            } else if (uri.equals("/groups")) {
                 handler = new GroupsHandler(this);
-            }
-            else if(uri.equals("/doors")){
+            } else if (uri.equals("/doors")) {
                 handler = new DoorsHandler(this);
-            }
-            else {
+            } else {
                 handler = new EmptyHandler();
             }
             logger.debug("serving with handler: " + handler.getName());
@@ -66,7 +67,7 @@ public class WebSocketServer extends NanoWSD {
                         } else {
                             e.printStackTrace();
                         }
-                    } catch (NullPointerException e){
+                    } catch (NullPointerException e) {
 
                     }
                 }
@@ -87,7 +88,8 @@ public class WebSocketServer extends NanoWSD {
         @Override
         protected void onMessage(WebSocketFrame webSocketFrame) {
             try {
-                logger.debug("M " + webSocketFrame);
+
+                if (!quiet) logger.debug("M " + webSocketFrame);
                 String receive = webSocketFrame.getTextPayload();
                 JSONObject recJson;
                 String msgType = null;
@@ -101,7 +103,7 @@ public class WebSocketServer extends NanoWSD {
                 } catch (JSONException | IllegalAccessException | InvocationTargetException e) {
                     sendInternalError(e.getMessage());
                 } catch (NoSuchMethodException e) {
-                    sendInternalError("["+handler.getName()+"] Can't fine method of " + msgType);
+                    sendInternalError("[" + handler.getName() + "] Can't fine method of " + msgType);
                 }
             } catch (IOException IOE) {
                 IOE.printStackTrace();
@@ -110,7 +112,9 @@ public class WebSocketServer extends NanoWSD {
 
         @Override
         protected void onPong(WebSocketFrame webSocketFrame) {
-            logger.debug("P " + webSocketFrame);
+            if (!quiet) {
+                logger.debug("P " + webSocketFrame);
+            }
         }
 
         @Override
